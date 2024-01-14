@@ -1,4 +1,4 @@
-# strecording
+# STREcording
 
 A new Flutter project.
 
