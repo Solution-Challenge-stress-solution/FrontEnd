@@ -1,6 +1,59 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:strecording/login_platform.dart';
+import 'package:strecording/main.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  LoginPlatform _loginPlatform = LoginPlatform.none;
+
+  void routeToHome() {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => const MyHomePage(title: 'STREcording')));
+  }
+
+  void signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    if (googleUser != null) {
+      print('name = ${googleUser.displayName}');
+      print('email = ${googleUser.email}');
+      print('id = ${googleUser.id}');
+
+      setState(() {
+        _loginPlatform = LoginPlatform.google;
+      });
+
+      routeToHome();
+    } else {
+      print('login failed!');
+    }
+  }
+
+  void signOut() async {
+    switch (_loginPlatform) {
+      case LoginPlatform.facebook:
+        break;
+      case LoginPlatform.google:
+        await GoogleSignIn().signOut();
+        break;
+      case LoginPlatform.kakao:
+        break;
+      case LoginPlatform.none:
+        break;
+    }
+
+    setState(() {
+      _loginPlatform = LoginPlatform.none;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,6 +83,7 @@ class LoginPage extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {
                   // Implement Google Sign-In
+                  signInWithGoogle();
                 },
                 style: ButtonStyle(
                   backgroundColor:
