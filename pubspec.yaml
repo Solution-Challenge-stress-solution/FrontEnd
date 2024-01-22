@@ -63,6 +63,9 @@ flutter:
     - assets/images/book_unclicked.png
     - assets/images/book_clicked.png
     - assets/images/mainlogo.png
+    - assets/images/loginlogo.png
+    - assets/images/google_login.png
+    - assets/images/kakao_login.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
