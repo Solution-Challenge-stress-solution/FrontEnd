@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">STREcording</string>
+    <string name="facebook_app_id">905291417733161</string>
+    <string name="fb_login_protocol_scheme">fb905291417733161</string>
+    <string name="facebook_client_token">7cd41b37619d853a4617361feaacdd6a</string>
+</resources>

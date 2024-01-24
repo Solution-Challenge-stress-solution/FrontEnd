@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'main.dart';
+import 'login_page.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -25,8 +25,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       if (_progress >= 1) {
         timer.cancel();
         // Once the progress is complete, navigate to another screen
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => const MyHomePage(title: 'STREcording')));
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => LoginPage()));
       } else {
         setState(() {
           _progress += 0.01;

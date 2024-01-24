@@ -22,6 +22,33 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<!-- login info -->
+	<key>CFBundleURLTypes</key>
+	<array>
+	  <dict>
+	  <key>CFBundleURLSchemes</key>
+	    <array>
+		  <!-- google login -->
+		  <string>com.googleusercontent.apps.730472127011-gjtb7j59cu7i1q8ic5ojhe05g11so5sl</string>
+		  <!-- kakao login -->
+		  <string>kakaoa8a1d140843f9fde9e271aaba4a1412b</string>
+		  <!-- facebook login -->
+		  <string>fb905291417733161</string>
+		</array>
+	  </dict>
+	</array>
+	<key>FacebookAppID</key>
+	<string>905291417733161</string>
+	<key>FacebookClientToken</key>
+	<string>7cd41b37619d853a4617361feaacdd6a</string>
+	<key>FacebookDisplayName</key>
+	<string>STREcording</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+  	  <string>fbapi</string>
+  	  <string>fb-messenger-share-api</string>
+	</array>
+	<!-- login info end -->
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
