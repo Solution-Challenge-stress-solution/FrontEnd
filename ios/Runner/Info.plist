@@ -30,6 +30,8 @@
 	    <array>
 		  <!-- google login -->
 		  <string>com.googleusercontent.apps.730472127011-gjtb7j59cu7i1q8ic5ojhe05g11so5sl</string>
+		  <!-- kakao login -->
+		  <string>kakaoa8a1d140843f9fde9e271aaba4a1412b</string>
 		  <!-- facebook login -->
 		  <string>fb905291417733161</string>
 		</array>
