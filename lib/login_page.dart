@@ -19,9 +19,18 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   LoginPlatform _loginPlatform = LoginPlatform.none;
 
-  void routeToHome() {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => const MyHomePage(title: 'STREcording')));
+  void routeToHome(String userEmail, String userName, String? userProfileImg) {
+    if (userProfileImg != null) {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => MyHomePage(
+              email: userEmail, name: userName, profileImg: userProfileImg)));
+    } else {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => MyHomePage(
+              email: userEmail,
+              name: userName,
+              profileImg: 'assets/images/profile.png')));
+    }
   }
 
   void signInWithGoogle() async {
@@ -36,26 +45,13 @@ class _LoginPageState extends State<LoginPage> {
         _loginPlatform = LoginPlatform.google;
       });
 
-      routeToHome();
+      final String email = googleUser.email;
+      final String name = googleUser.displayName.toString();
+      final String? profileSrc = googleUser.photoUrl;
+
+      routeToHome(email, name, profileSrc);
     } else {
       print('google login failed!');
-    }
-  }
-
-  void signInWithFacebook() async {
-    final LoginResult result = await FacebookAuth.instance.login();
-
-    if (result.status == LoginStatus.success) {
-      final AccessToken accessToken = result.accessToken!;
-      // Send the token to the backend server
-
-      setState(() {
-        _loginPlatform = LoginPlatform.facebook;
-      });
-
-      routeToHome();
-    } else {
-      print('facebook login failed!');
     }
   }
 
@@ -79,13 +75,43 @@ class _LoginPageState extends State<LoginPage> {
       final profileInfo = json.decode(response.body);
       print(profileInfo.toString());
 
+      // get email and name
+      User user = await UserApi.instance.me();
+      final String userEmail = user.kakaoAccount?.email ?? '@kakao.com';
+      final String userName = user.kakaoAccount?.profile?.nickname ?? 'Unknown';
+      final String? userProfileimg =
+          user.kakaoAccount?.profile?.thumbnailImageUrl;
+
       setState(() {
         _loginPlatform = LoginPlatform.kakao;
       });
 
-      routeToHome();
+      routeToHome(userEmail, userName, userProfileimg);
     } catch (error) {
-      print('카카오톡으로 로그인 실패 $error');
+      print('failed to log in with KakaoTalk: $error');
+    }
+  }
+
+  void signInWithFacebook() async {
+    final LoginResult result = await FacebookAuth.instance.login();
+
+    if (result.status == LoginStatus.success) {
+      final AccessToken accessToken =
+          result.accessToken!; // Send this token to the backend server
+
+      final userData = await FacebookAuth.instance.getUserData(
+        fields: "name,email",
+      );
+      final String userName = userData['name'];
+      final String userEmail = userData['email'];
+
+      setState(() {
+        _loginPlatform = LoginPlatform.facebook;
+      });
+
+      routeToHome(userEmail, userName, null);
+    } else {
+      print('facebook login failed!');
     }
   }
 
