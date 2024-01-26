@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:strecording/profile_widget.dart';
+import 'package:strecording/widgets/profile_widget.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage(
