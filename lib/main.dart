@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
-import 'package:strecording/welcome_screan.dart';
+import 'package:strecording/welcome_screen.dart';
 import 'package:strecording/setting_page.dart';
 
 void main() {
