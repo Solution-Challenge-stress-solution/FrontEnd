@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:strecording/widgets/profile_widget.dart';
+import 'package:strecording/widgets/settings_widget.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage(
@@ -35,6 +36,13 @@ class _SettingPageState extends State<SettingPage> {
               email: widget.email,
               name: widget.name,
               profileImg: widget.profileImg),
+          const Text('Profile',
+              style: TextStyle(
+                fontFamily: 'Dongle',
+                fontWeight: FontWeight.normal,
+                fontSize: 60,
+              )),
+          const Expanded(child: SettingsWidget()),
         ],
       ),
     ));

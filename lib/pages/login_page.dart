@@ -17,8 +17,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  LoginPlatform _loginPlatform = LoginPlatform.none;
-
   void routeToHome(String userEmail, String userName, String? userProfileImg) {
     if (userProfileImg != null) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -42,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
       print('id = ${googleUser.id}');
 
       setState(() {
-        _loginPlatform = LoginPlatform.google;
+        AuthManager.currentPlatform = LoginPlatform.google;
       });
 
       final String email = googleUser.email;
@@ -83,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
           user.kakaoAccount?.profile?.thumbnailImageUrl;
 
       setState(() {
-        _loginPlatform = LoginPlatform.kakao;
+        AuthManager.currentPlatform = LoginPlatform.kakao;
       });
 
       routeToHome(userEmail, userName, userProfileimg);
@@ -106,33 +104,13 @@ class _LoginPageState extends State<LoginPage> {
       final String userEmail = userData['email'];
 
       setState(() {
-        _loginPlatform = LoginPlatform.facebook;
+        AuthManager.currentPlatform = LoginPlatform.facebook;
       });
 
       routeToHome(userEmail, userName, null);
     } else {
       print('facebook login failed!');
     }
-  }
-
-  void signOut() async {
-    switch (_loginPlatform) {
-      case LoginPlatform.google:
-        await GoogleSignIn().signOut();
-        break;
-      case LoginPlatform.kakao:
-        await UserApi.instance.logout();
-        break;
-      case LoginPlatform.facebook:
-        await FacebookAuth.instance.logOut();
-        break;
-      case LoginPlatform.none:
-        break;
-    }
-
-    setState(() {
-      _loginPlatform = LoginPlatform.none;
-    });
   }
 
   @override
