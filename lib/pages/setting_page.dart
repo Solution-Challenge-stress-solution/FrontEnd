@@ -36,7 +36,8 @@ class _SettingPageState extends State<SettingPage> {
               email: widget.email,
               name: widget.name,
               profileImg: widget.profileImg),
-          const Text('Profile',
+          const SizedBox(height: 34),
+          const Text('Settings',
               style: TextStyle(
                 fontFamily: 'Dongle',
                 fontWeight: FontWeight.normal,
