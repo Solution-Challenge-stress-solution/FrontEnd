@@ -62,6 +62,29 @@ class AuthManager {
         },
       );
 
+      // // 백엔드 jwt 토큰 추가
+      // // 카카오 로그인 후 OAuth 토큰을 서버로 전송
+      // final jwtTokenResponse = await http.post(
+      //   Uri.parse('YOUR_BACKEND_ENDPOINT'), // 백엔드 JWT 토큰 교환 엔드포인트
+      //   headers: <String, String>{
+      //     'Content-Type': 'application/json; charset=UTF-8',
+      //   },
+      //   body: jsonEncode(<String, String>{
+      //     'kakaoAccessToken': token.accessToken, // 카카오 액세스 토큰
+      //   }),
+      // );
+
+      // if (jwtTokenResponse.statusCode == 200) {
+      //   // 성공적으로 JWT 토큰을 받았을 때의 처리
+      //   String jwtToken =
+      //       json.decode(jwtTokenResponse.body)['jwtToken']; // JWT 토큰 파싱
+      //   // JWT 토큰을 이용한 추가 로직 구현
+      // } else {
+      //   // 서버로부터 JWT 토큰을 받는 데 실패했을 때의 처리
+      //   print('Failed to load data: ${response.statusCode}');
+      //   print('Error message: ${response.body}');
+      // }
+
       final profileInfo = json.decode(response.body);
       print(profileInfo.toString());
 
