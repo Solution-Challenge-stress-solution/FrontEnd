@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:strecording/pages/welcome_screen.dart';
+import 'package:strecording/pages/diary_page.dart';
 import 'package:strecording/pages/setting_page.dart';
 
 void main() {
@@ -51,10 +52,9 @@ class _MyHomePageState extends State<MyHomePage> {
   late final List<Widget> _widgetOptions = <Widget>[
     const Text('Home Page',
         style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
-    const Text('Diary Page',
-        style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+    DiaryPage(),
     SettingPage(
-        email: widget.email, name: widget.name, profileImg: widget.profileImg)
+        email: widget.email, name: widget.name, profileImg: widget.profileImg),
   ];
   void _onItemTapped(int index) {
     setState(() {
