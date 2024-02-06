@@ -72,6 +72,8 @@ flutter:
     - assets/images/google_login.png
     - assets/images/kakao_login.png
     - assets/images/profile.png
+    - assets/images/record_idle.png
+    - assets/images/recording.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
