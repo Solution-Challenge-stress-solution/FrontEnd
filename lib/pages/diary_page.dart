@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:strecording/widgets/recording_widget.dart';
+import 'package:strecording/widgets/calendar_widget.dart';
 
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
@@ -10,6 +12,15 @@ class DiaryPage extends StatefulWidget {
 
 class _DiaryPageState extends State<DiaryPage> {
   bool isDarkened = false;
+  DateTime _currentDate = DateTime.now();
+
+  void setCurrentDate(DateTime selectedDate) {
+    _currentDate = selectedDate;
+  }
+
+  DateTime getCurrentDate() {
+    return _currentDate;
+  }
 
   void toggleDarken() {
     setState(() {
@@ -72,7 +83,20 @@ class _DiaryPageState extends State<DiaryPage> {
         IconButton(
           icon: Icon(Icons.calendar_today),
           onPressed: () {
-            // Handle calendar action
+            showModalBottomSheet(
+              context: context,
+              builder: (BuildContext context) {
+                return Container(
+                  height: MediaQuery.of(context).size.height * 0.95,
+                  child: CalendarWidget(
+                      setCurrentDate: setCurrentDate,
+                      getCurrentDate: getCurrentDate,
+                      modalContext: context),
+                );
+              },
+            ).then((_) {
+              setState(() {});
+            });
           },
         ),
         IconButton(
@@ -86,10 +110,10 @@ class _DiaryPageState extends State<DiaryPage> {
   }
 
   Widget buildDateDisplay() {
-    return const Expanded(
+    return Expanded(
       child: Center(
-        child: Text('2024.01.01',
-            style: TextStyle(
+        child: Text(DateFormat('yyyy.MM.dd').format(getCurrentDate()),
+            style: const TextStyle(
                 fontFamily: 'Dongle',
                 fontSize: 36,
                 fontWeight: FontWeight.normal)),
