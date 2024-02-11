@@ -52,12 +52,19 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
+  void goToDiaryPage() {
+    setState(() {
+      _selectedIndex = 1;
+    });
+  }
+
   late final List<Widget> _widgetOptions = <Widget>[
-    const HomePage(),
+    HomePage(navigateToDiaryPage: goToDiaryPage),
     const DiaryPage(),
     SettingPage(
         email: widget.email, name: widget.name, profileImg: widget.profileImg),
   ];
+
   void _onItemTapped(int index) {
     setState(() {
       // This call to setState tells the Flutter framework that something has
