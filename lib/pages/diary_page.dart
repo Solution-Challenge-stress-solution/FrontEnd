@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:strecording/widgets/recording_widget.dart';
 import 'package:strecording/widgets/calendar_widget.dart';
+import 'package:strecording/widgets/menu_widget.dart';
 
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
@@ -38,10 +39,10 @@ class _DiaryPageState extends State<DiaryPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                buildDiaryHeader(),
+                SizedBox(width: 500, height: 80, child: buildDiaryHeader()),
                 const SizedBox(height: 16),
-                buildDateDisplay(),
-                const SizedBox(height: 160),
+                SizedBox(width: 500, height: 30, child: buildDateDisplay()),
+                const SizedBox(height: 200),
                 buildDiaryTextField(),
                 const SizedBox(height: 16),
               ],
@@ -99,12 +100,9 @@ class _DiaryPageState extends State<DiaryPage> {
             });
           },
         ),
-        IconButton(
-          icon: Icon(Icons.more_vert),
-          onPressed: () {
-            // Handle more action
-          },
-        ),
+        Align(
+            alignment: Alignment.centerRight,
+            child: Container(width: 48, height: 48, child: MenuWidget())),
       ],
     );
   }
@@ -122,28 +120,26 @@ class _DiaryPageState extends State<DiaryPage> {
   }
 
   Widget buildDiaryTextField() {
-    return Expanded(
-      flex: 5,
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Color.fromARGB(255, 255, 241, 213),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: const TextField(
-          maxLines: null,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.transparent,
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent),
-              borderRadius: BorderRadius.all(Radius.circular(12)),
-            ),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent),
-              borderRadius: BorderRadius.all(Radius.circular(12)),
-            ),
+    return Container(
+      height: 200,
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Color.fromARGB(255, 255, 241, 213),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: const TextField(
+        maxLines: null,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.transparent,
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.transparent),
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.transparent),
+            borderRadius: BorderRadius.all(Radius.circular(12)),
           ),
         ),
       ),
