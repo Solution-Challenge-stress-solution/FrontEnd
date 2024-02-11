@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 
 class RecordingWidget extends StatefulWidget {
-  const RecordingWidget({Key? key, required this.toggleDarken})
+  const RecordingWidget(
+      {Key? key, required this.toggleIsRecording, required this.isRecording})
       : super(key: key);
-  final VoidCallback toggleDarken;
+  final VoidCallback toggleIsRecording;
+  final bool isRecording;
+
   @override
   State<RecordingWidget> createState() => _RecordingWidgetState();
 }
 
 class _RecordingWidgetState extends State<RecordingWidget> {
-  bool isRecording = false;
-
   void handlePress() {
-    setState(() {
-      isRecording = !isRecording;
-    });
-    widget.toggleDarken();
+    widget.toggleIsRecording();
+    print(widget.isRecording);
   }
 
   @override
@@ -25,10 +24,10 @@ class _RecordingWidgetState extends State<RecordingWidget> {
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: isRecording
+          color: widget.isRecording
               ? primaryColor
               : const Color.fromARGB(255, 255, 252, 248),
-          // borderRadius: BorderRadius.circular(12),
+          //borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.25),
@@ -39,14 +38,11 @@ class _RecordingWidgetState extends State<RecordingWidget> {
           ],
         ),
         child: IconButton(
-          iconSize: 24,
-          icon: isRecording
-              ? Image.asset('assets/images/recording.png')
-              : Image.asset('assets/images/record_idle.png'),
-          onPressed: () {
-            handlePress();
-          },
-        ),
+            iconSize: 24,
+            icon: widget.isRecording
+                ? Image.asset('assets/images/recording.png')
+                : Image.asset('assets/images/record_idle.png'),
+            onPressed: handlePress),
       ),
     );
   }

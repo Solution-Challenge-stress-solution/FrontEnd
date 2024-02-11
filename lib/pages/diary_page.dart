@@ -12,7 +12,7 @@ class DiaryPage extends StatefulWidget {
 }
 
 class _DiaryPageState extends State<DiaryPage> {
-  bool isDarkened = false;
+  bool isRecording = false;
   DateTime _currentDate = DateTime.now();
 
   void setCurrentDate(DateTime selectedDate) {
@@ -23,9 +23,9 @@ class _DiaryPageState extends State<DiaryPage> {
     return _currentDate;
   }
 
-  void toggleDarken() {
+  void toggleIsRecording() {
     setState(() {
-      isDarkened = !isDarkened;
+      isRecording = !isRecording;
     });
   }
 
@@ -48,13 +48,10 @@ class _DiaryPageState extends State<DiaryPage> {
               ],
             ),
           ),
-          if (isDarkened)
+          if (isRecording)
             Positioned.fill(
-              child: GestureDetector(
-                onTap: toggleDarken,
-                child: Container(
-                  color: Colors.black.withOpacity(0.25),
-                ),
+              child: Container(
+                color: Colors.black.withOpacity(0.25),
               ),
             ),
           Positioned(
@@ -62,7 +59,9 @@ class _DiaryPageState extends State<DiaryPage> {
               right: 16,
               bottom: 10,
               height: 80,
-              child: RecordingWidget(toggleDarken: toggleDarken)),
+              child: RecordingWidget(
+                  toggleIsRecording: toggleIsRecording,
+                  isRecording: isRecording)),
         ],
       ),
     );
