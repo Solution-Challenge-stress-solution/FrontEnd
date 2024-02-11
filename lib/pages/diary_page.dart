@@ -39,12 +39,12 @@ class _DiaryPageState extends State<DiaryPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                SizedBox(width: 500, height: 80, child: buildDiaryHeader()),
+                buildDiaryHeader(),
                 const SizedBox(height: 16),
-                SizedBox(width: 500, height: 30, child: buildDateDisplay()),
+                buildDateDisplay(),
                 const SizedBox(height: 200),
                 buildDiaryTextField(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 110),
               ],
             ),
           ),

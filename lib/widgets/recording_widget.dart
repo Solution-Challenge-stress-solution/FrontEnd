@@ -14,7 +14,6 @@ class RecordingWidget extends StatefulWidget {
 class _RecordingWidgetState extends State<RecordingWidget> {
   void handlePress() {
     widget.toggleIsRecording();
-    print(widget.isRecording);
   }
 
   @override
