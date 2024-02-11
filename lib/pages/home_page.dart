@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:strecording/widgets/audioplayer_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.navigateToDiaryPage});
@@ -10,6 +11,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool isRecorded = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +27,10 @@ class _HomePageState extends State<HomePage> {
                   fontWeight: FontWeight.normal,
                   fontSize: 60,
                 )),
-            defaultTodaysDiary(widget.navigateToDiaryPage),
+            isRecorded
+                ? defaultTodaysDiary(widget.navigateToDiaryPage)
+                : Container(
+                    width: 400, height: 180, child: AudioPlayerWidget()),
           ],
         ),
       ),
