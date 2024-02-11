@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:strecording/pages/welcome_screen.dart';
+import 'package:strecording/pages/diary_page.dart';
 import 'package:strecording/pages/setting_page.dart';
 
 void main() {
   KakaoSdk.init(nativeAppKey: 'a8a1d140843f9fde9e271aaba4a1412b');
+  initializeDateFormatting().then((_) => runApp(MyApp()));
   runApp(const MyApp());
 }
 
@@ -51,10 +54,9 @@ class _MyHomePageState extends State<MyHomePage> {
   late final List<Widget> _widgetOptions = <Widget>[
     const Text('Home Page',
         style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
-    const Text('Diary Page',
-        style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+    DiaryPage(),
     SettingPage(
-        email: widget.email, name: widget.name, profileImg: widget.profileImg)
+        email: widget.email, name: widget.name, profileImg: widget.profileImg),
   ];
   void _onItemTapped(int index) {
     setState(() {
