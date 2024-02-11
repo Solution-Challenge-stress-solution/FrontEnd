@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:strecording/pages/welcome_screen.dart';
+import 'package:strecording/pages/home_page.dart';
 import 'package:strecording/pages/diary_page.dart';
 import 'package:strecording/pages/setting_page.dart';
 
@@ -51,13 +52,19 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
+  void goToDiaryPage() {
+    setState(() {
+      _selectedIndex = 1;
+    });
+  }
+
   late final List<Widget> _widgetOptions = <Widget>[
-    const Text('Home Page',
-        style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
-    DiaryPage(),
+    HomePage(navigateToDiaryPage: goToDiaryPage),
+    const DiaryPage(),
     SettingPage(
         email: widget.email, name: widget.name, profileImg: widget.profileImg),
   ];
+
   void _onItemTapped(int index) {
     setState(() {
       // This call to setState tells the Flutter framework that something has
