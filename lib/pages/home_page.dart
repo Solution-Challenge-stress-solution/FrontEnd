@@ -31,17 +31,23 @@ class _HomePageState extends State<HomePage> {
                   )),
               isRecorded
                   ? defaultTodaysDiary(widget.navigateToDiaryPage)
-                  : const Column(children: <Widget>[
-                      SizedBox(
-                          width: 400, height: 180, child: AudioPlayerWidget()),
-                      Text('Daily Stress Level',
-                          style: TextStyle(
-                            fontFamily: 'Dongle',
-                            fontWeight: FontWeight.normal,
-                            fontSize: 60,
-                          )),
-                      StressLevelWidget(),
-                    ]),
+                  : const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                          SizedBox(
+                              width: 400,
+                              height: 180,
+                              child: AudioPlayerWidget()),
+                          SizedBox(height: 20),
+                          Text('Daily Stress Level',
+                              style: TextStyle(
+                                fontFamily: 'Dongle',
+                                fontWeight: FontWeight.normal,
+                                fontSize: 60,
+                              )),
+                          StressLevelWidget(),
+                        ]),
             ],
           ),
         ),
