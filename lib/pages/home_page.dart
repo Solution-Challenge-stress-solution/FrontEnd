@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:strecording/widgets/audioplayer_widget.dart';
 import 'package:strecording/widgets/stress_level.dart';
+import 'package:strecording/widgets/activitycard_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.navigateToDiaryPage});
@@ -12,7 +15,38 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool isRecorded = false;
+  bool isRecorded = true;
+  Activity? myActivity;
+
+  Future<void> fetchActivity(int argument) async {
+    var url = Uri.parse('http://34.64.90.112:8080/api/activities/$argument');
+
+    try {
+      var response = await http.get(url);
+      if (response.statusCode == 200) {
+        final activityJson = json.decode(utf8.decode(response.bodyBytes));
+        setState(() {
+          myActivity = Activity.fromJson(activityJson['data']);
+        });
+      } else {
+        print('Failed to load data');
+      }
+    } catch (e) {
+      print('Caught error: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (isRecorded) {
+      fetchActivity(1);
+    } else {
+      setState(() {
+        myActivity = null;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,24 +64,35 @@ class _HomePageState extends State<HomePage> {
                     fontSize: 60,
                   )),
               isRecorded
-                  ? defaultTodaysDiary(widget.navigateToDiaryPage)
-                  : const Column(
+                  ? Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                          SizedBox(
+                          const SizedBox(
                               width: 400,
                               height: 180,
                               child: AudioPlayerWidget()),
-                          SizedBox(height: 20),
-                          Text('Daily Stress Level',
+                          const SizedBox(height: 20),
+                          const Text('Daily Stress Level',
                               style: TextStyle(
                                 fontFamily: 'Dongle',
                                 fontWeight: FontWeight.normal,
                                 fontSize: 60,
                               )),
-                          StressLevelWidget(),
-                        ]),
+                          const StressLevelWidget(),
+                          const SizedBox(height: 20),
+                          const Text(
+                            "Today's Activity",
+                            style: TextStyle(
+                              fontFamily: 'Dongle',
+                              fontWeight: FontWeight.normal,
+                              fontSize: 60,
+                            ),
+                          ),
+                          if (myActivity != null)
+                            ActivityCard(activity: myActivity!),
+                        ])
+                  : defaultTodaysDiary(widget.navigateToDiaryPage),
             ],
           ),
         ),
