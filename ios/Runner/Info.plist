@@ -72,5 +72,8 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- record permission -->
+	<key>NSMicrophoneUsageDescription</key>
+    <string>Permission is needed to record voice</string>
 </dict>
 </plist>

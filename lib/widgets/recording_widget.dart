@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:strecording/utilities/record_manager.dart';
 
 class RecordingWidget extends StatefulWidget {
   const RecordingWidget(
       {Key? key, required this.toggleIsRecording, required this.isRecording})
       : super(key: key);
+
   final VoidCallback toggleIsRecording;
   final bool isRecording;
 
@@ -13,6 +15,17 @@ class RecordingWidget extends StatefulWidget {
 
 class _RecordingWidgetState extends State<RecordingWidget> {
   void handlePress() {
+    if (!widget.isRecording) {
+      RecordManager.startRecord();
+    } else {
+      RecordManager.stopRecord().then((path) {
+        print('path: $path');
+        RecordManager.postFile(path).then((res) {
+          print('res: $res');
+        });
+      });
+    }
+
     widget.toggleIsRecording();
   }
 
