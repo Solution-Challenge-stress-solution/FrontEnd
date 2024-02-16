@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:strecording/main.dart';
 import 'package:strecording/utilities/login_platform.dart';
+import 'package:strecording/utilities/webview_widget.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -10,12 +11,12 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  void _navigateToHome(String email, String name, String? profileImg) {
+  void _navigateToHome() {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => MyHomePage(
-            email: email,
-            name: name,
-            profileImg: profileImg ?? 'assets/images/profile.png')));
+        builder: (context) => const MyHomePage(
+            email: 'test',
+            name: 'test',
+            profileImg: 'assets/images/profile.png')));
   }
 
   @override
@@ -46,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
               height: 58,
               child: ElevatedButton(
                 onPressed: () {
-                  AuthManager.signInWithGoogle(_navigateToHome);
+                  // AuthManager.signInWithGoogle(_navigateToHome);
                 },
                 style: ButtonStyle(
                   backgroundColor:
@@ -65,7 +66,21 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 34),
             ElevatedButton(
               onPressed: () {
-                AuthManager.signInWithKakao(_navigateToHome);
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled:
+                      true, // Allows the modal to take full screen height if needed
+                  builder: (BuildContext context) {
+                    return FractionallySizedBox(
+                      heightFactor: 0.8,
+                      child: OAuthWebView(
+                        navigateToHome: _navigateToHome,
+                        redirectUrl:
+                            'https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=3ea1d757fe280fdf11868685602c24d0&redirect_uri=http://34.64.90.112:8080/login/oauth2/code/kakao',
+                      ),
+                    );
+                  },
+                );
               },
               style: ButtonStyle(
                 backgroundColor:
@@ -79,29 +94,6 @@ class _LoginPageState extends State<LoginPage> {
                 height: 58,
               ),
             ),
-            const SizedBox(height: 34),
-            SizedBox(
-              width: 200,
-              height: 58,
-              child: ElevatedButton(
-                onPressed: () {
-                  AuthManager.signInWithFacebook(_navigateToHome);
-                },
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(const Color(0xFF316FF6)),
-                  padding: MaterialStateProperty.all(EdgeInsets.zero),
-                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12))),
-                  overlayColor: MaterialStateProperty.all(Colors.transparent),
-                ),
-                child: const Text('Sign in with Facebook',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                    )),
-              ),
-            )
           ],
         ),
       ),
