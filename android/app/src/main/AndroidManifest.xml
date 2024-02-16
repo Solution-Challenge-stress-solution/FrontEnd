@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- internet permission -->
     <uses-permission android:name="android.permission.INTERNET"/>
-    <!-- internet permission end -->
+    <!-- record permission -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <application
         android:label="strecording"
         android:name="${applicationName}"
