@@ -81,23 +81,13 @@ class AuthManager {
     await _googleSignIn.signOut();
   }
 
-  static Future<void> signOutFromKakao() async {
-    await _kakaoUserApi.logout();
-  }
-
   static Future<bool> signOut() async {
     try {
-      switch (currentPlatform) {
-        case LoginPlatform.google:
-          await signOutFromGoogle();
-          break;
-        case LoginPlatform.kakao:
-          await signOutFromKakao();
-          break;
-        case LoginPlatform.none:
-        default:
-          break;
+      if (currentPlatform == LoginPlatform.google) {
+        await signOutFromGoogle();
       }
+
+      token_manager.TokenManager.clearToken();
       currentPlatform = LoginPlatform.none;
 
       return true;
