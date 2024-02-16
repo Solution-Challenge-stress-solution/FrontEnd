@@ -94,29 +94,6 @@ class _LoginPageState extends State<LoginPage> {
                 height: 58,
               ),
             ),
-            const SizedBox(height: 34),
-            SizedBox(
-              width: 200,
-              height: 58,
-              child: ElevatedButton(
-                onPressed: () {
-                  // AuthManager.signInWithFacebook(_navigateToHome);
-                },
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(const Color(0xFF316FF6)),
-                  padding: MaterialStateProperty.all(EdgeInsets.zero),
-                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12))),
-                  overlayColor: MaterialStateProperty.all(Colors.transparent),
-                ),
-                child: const Text('Sign in with Facebook',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                    )),
-              ),
-            )
           ],
         ),
       ),

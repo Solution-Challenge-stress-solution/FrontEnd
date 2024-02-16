@@ -1,9 +1,7 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:strecording/utilities/token_manager.dart' as token_manager;
 
@@ -22,7 +20,6 @@ class AuthManager {
 
   static final GoogleSignIn _googleSignIn = GoogleSignIn();
   static final _kakaoUserApi = UserApi.instance;
-  static final FacebookAuth _facebookAuth = FacebookAuth.instance;
 
   static Future<void> signInWithGoogle(
       NavigationCallback navigateToHome) async {
@@ -80,34 +77,8 @@ class AuthManager {
     }
   }
 
-  static Future<void> signInWithFacebook(
-      NavigationCallback navigateToHome) async {
-    final LoginResult result = await FacebookAuth.instance.login();
-
-    if (result.status == LoginStatus.success) {
-      final AccessToken accessToken =
-          result.accessToken!; // Send this token to the backend server
-
-      final userData = await FacebookAuth.instance.getUserData(
-        fields: "name,email",
-      );
-      final String userName = userData['name'];
-      final String userEmail = userData['email'];
-
-      AuthManager.currentPlatform = LoginPlatform.facebook;
-
-      //navigateToHome(userEmail, userName, null);
-    } else {
-      print('facebook login failed!');
-    }
-  }
-
   static Future<void> signOutFromGoogle() async {
     await _googleSignIn.signOut();
-  }
-
-  static Future<void> signOutFromFacebook() async {
-    await _facebookAuth.logOut();
   }
 
   static Future<void> signOutFromKakao() async {
@@ -122,9 +93,6 @@ class AuthManager {
           break;
         case LoginPlatform.kakao:
           await signOutFromKakao();
-          break;
-        case LoginPlatform.facebook:
-          await signOutFromFacebook();
           break;
         case LoginPlatform.none:
         default:
