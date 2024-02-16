@@ -1,10 +1,11 @@
 import 'dart:convert';
-import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:http/http.dart' as http;
+import 'package:strecording/utilities/token_manager.dart' as token_manager;
 
 enum LoginPlatform {
   google,
@@ -13,8 +14,7 @@ enum LoginPlatform {
   none, // logout
 }
 
-typedef NavigationCallback = void Function(
-    String email, String name, String? profileImg);
+typedef NavigationCallback = void Function();
 
 // Utility class to manage sign-in instances and sign-out logic
 class AuthManager {
@@ -26,6 +26,9 @@ class AuthManager {
 
   static Future<void> signInWithGoogle(
       NavigationCallback navigateToHome) async {
+    // final signinUrlRes =
+    //     await http.get(Uri.parse('http://34.64.90.112:8080/auth/google'));
+    //     json.decode(signinUrlRes)[]
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
     if (googleUser != null) {
@@ -39,67 +42,41 @@ class AuthManager {
       final String name = googleUser.displayName.toString();
       final String? profileSrc = googleUser.photoUrl;
 
-      navigateToHome(email, name, profileSrc);
+      //navigateToHome(email, name, profileSrc);
     } else {
       print('google login failed!');
     }
   }
 
-  static Future<void> signInWithKakao(NavigationCallback navigateToHome) async {
+  static Future<String> getGoogleUrl() async {
+    String requestUrl = 'http://34.64.90.112:8080/auth/google';
+    final response = await http.get(Uri.parse(requestUrl));
+    print(json.decode(response.body));
+    return json.decode(response.body);
+  }
+
+  static Future<void> signInWithKakao(String oauthCode) async {
     try {
-      bool isInstalled = await isKakaoTalkInstalled();
+      String requestUrl =
+          'http://34.64.90.112:8080/auth/kakao?code=${oauthCode}';
+      final response = await http.get(Uri.parse(requestUrl));
 
-      OAuthToken token = isInstalled
-          ? await UserApi.instance.loginWithKakaoTalk()
-          : await UserApi.instance.loginWithKakaoAccount();
+      if (response.statusCode == 200) {
+        var responseBody = json.decode(response.body);
 
-      final url = Uri.https('kapi.kakao.com', '/v2/user/me');
-
-      final response = await http.get(
-        url,
-        headers: {
-          HttpHeaders.authorizationHeader: 'Bearer ${token.accessToken}'
-        },
-      );
-
-      // // 백엔드 jwt 토큰 추가
-      // // 카카오 로그인 후 OAuth 토큰을 서버로 전송
-      // final jwtTokenResponse = await http.post(
-      //   Uri.parse('YOUR_BACKEND_ENDPOINT'), // 백엔드 JWT 토큰 교환 엔드포인트
-      //   headers: <String, String>{
-      //     'Content-Type': 'application/json; charset=UTF-8',
-      //   },
-      //   body: jsonEncode(<String, String>{
-      //     'kakaoAccessToken': token.accessToken, // 카카오 액세스 토큰
-      //   }),
-      // );
-
-      // if (jwtTokenResponse.statusCode == 200) {
-      //   // 성공적으로 JWT 토큰을 받았을 때의 처리
-      //   String jwtToken =
-      //       json.decode(jwtTokenResponse.body)['jwtToken']; // JWT 토큰 파싱
-      //   // JWT 토큰을 이용한 추가 로직 구현
-      // } else {
-      //   // 서버로부터 JWT 토큰을 받는 데 실패했을 때의 처리
-      //   print('Failed to load data: ${response.statusCode}');
-      //   print('Error message: ${response.body}');
-      // }
-
-      final profileInfo = json.decode(response.body);
-      print(profileInfo.toString());
-
-      // Get email and name
-      User user = await UserApi.instance.me();
-      final String userEmail = user.kakaoAccount?.email ?? '@kakao.com';
-      final String userName = user.kakaoAccount?.profile?.nickname ?? 'Unknown';
-      final String? userProfileimg =
-          user.kakaoAccount?.profile?.thumbnailImageUrl;
-
-      AuthManager.currentPlatform = LoginPlatform.kakao;
-
-      navigateToHome(userEmail, userName, userProfileimg);
+        if (responseBody['status'] == 'SUCCESS' &&
+            responseBody.containsKey('data')) {
+          String accessToken = responseBody['data']['accessToken'];
+          token_manager.TokenManager.setToken(accessToken);
+          AuthManager.currentPlatform = LoginPlatform.kakao;
+        } else {
+          print('Login failed: ${responseBody['message']}');
+        }
+      } else {
+        print('Request failed with status: ${response.statusCode}.');
+      }
     } catch (error) {
-      print('failed to log in with KakaoTalk: $error');
+      print('Failed to log in with Kakao: $error');
     }
   }
 
@@ -119,7 +96,7 @@ class AuthManager {
 
       AuthManager.currentPlatform = LoginPlatform.facebook;
 
-      navigateToHome(userEmail, userName, null);
+      //navigateToHome(userEmail, userName, null);
     } else {
       print('facebook login failed!');
     }
