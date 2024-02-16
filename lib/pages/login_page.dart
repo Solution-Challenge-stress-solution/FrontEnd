@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:strecording/main.dart';
-import 'package:strecording/utilities/login_platform.dart';
-import 'package:strecording/utilities/webview_widget.dart';
+import 'package:strecording/widgets/webview_widget.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
