@@ -8,7 +8,7 @@ import 'package:strecording/pages/setting_page.dart';
 
 void main() {
   KakaoSdk.init(nativeAppKey: 'a8a1d140843f9fde9e271aaba4a1412b');
-  initializeDateFormatting().then((_) => runApp(MyApp()));
+  initializeDateFormatting().then((_) => runApp(const MyApp()));
   runApp(const MyApp());
 }
 
@@ -31,19 +31,11 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage(
-      {super.key,
-      required this.email,
-      required this.name,
-      required this.profileImg});
+  const MyHomePage({super.key});
   // This class is the configuration for the state. It holds the values (in this
   // case the title) provided by the parent (in this case the App widget) and
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
-
-  final String email;
-  final String name;
-  final String profileImg;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -61,8 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late final List<Widget> _widgetOptions = <Widget>[
     HomePage(navigateToDiaryPage: goToDiaryPage),
     const DiaryPage(),
-    SettingPage(
-        email: widget.email, name: widget.name, profileImg: widget.profileImg),
+    const SettingPage(),
   ];
 
   void _onItemTapped(int index) {

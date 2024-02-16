@@ -9,7 +9,7 @@ class TokenManager {
     _token = null;
   }
 
-  static Map<String, String> get headers {
+  static Map<String, String> getHeaders() {
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
     };
