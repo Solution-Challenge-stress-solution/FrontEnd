@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:strecording/widgets/recording_widget.dart';
 import 'package:strecording/widgets/calendar_widget.dart';
 import 'package:strecording/widgets/menu_widget.dart';
+import 'package:strecording/widgets/loading_widget.dart';
 
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
@@ -13,7 +14,14 @@ class DiaryPage extends StatefulWidget {
 
 class _DiaryPageState extends State<DiaryPage> {
   bool isRecording = false;
+  bool _isLoading = false;
   DateTime _currentDate = DateTime.now();
+
+  void toggleIsLoading() {
+    setState(() {
+      _isLoading = !_isLoading;
+    });
+  }
 
   void setCurrentDate(DateTime selectedDate) {
     _currentDate = selectedDate;
@@ -54,14 +62,17 @@ class _DiaryPageState extends State<DiaryPage> {
                 color: Colors.black.withOpacity(0.25),
               ),
             ),
+          if (_isLoading) const LoadingWidget(),
           Positioned(
               left: 16,
               right: 16,
               bottom: 10,
               height: 80,
               child: RecordingWidget(
-                  toggleIsRecording: toggleIsRecording,
-                  isRecording: isRecording)),
+                toggleIsRecording: toggleIsRecording,
+                isRecording: isRecording,
+                toggleIsLoading: toggleIsLoading,
+              )),
         ],
       ),
     );
