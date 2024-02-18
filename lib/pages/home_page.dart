@@ -18,8 +18,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool isRecorded = true; //false;
-  String _filePath = '';
+  bool isRecorded = false;
+  final String _filePath = '';
   Activity? myActivity;
 
   Future<void> fetchDiary() async {

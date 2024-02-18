@@ -10,6 +10,7 @@ import 'package:strecording/widgets/menu_widget.dart';
 import 'package:strecording/widgets/loading_widget.dart';
 import 'package:strecording/widgets/modal_widget.dart';
 import 'package:strecording/utilities/token_manager.dart';
+import 'package:strecording/utilities/diary_entry.dart';
 
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
@@ -24,6 +25,7 @@ class _DiaryPageState extends State<DiaryPage> {
   bool _isModalOpen = false;
   String _filePath = '';
   String _diaryText = '';
+  DiaryEntry? _diaryEntry;
   DateTime _currentDate = DateTime.now();
   late TextEditingController _controller;
 
@@ -63,6 +65,12 @@ class _DiaryPageState extends State<DiaryPage> {
     });
   }
 
+  void setDiaryEntry(Map<String, dynamic> diary) {
+    setState(() {
+      _diaryEntry = DiaryEntry.fromJson(diary);
+    });
+  }
+
   DateTime getCurrentDate() {
     return _currentDate;
   }
@@ -82,6 +90,7 @@ class _DiaryPageState extends State<DiaryPage> {
           headers: TokenManager.getHeaders());
       final resJson = json.decode(utf8.decode(res.bodyBytes));
       setDiaryText(resJson['data']['content']);
+      setDiaryEntry(resJson['data']);
     } catch (e) {
       print(e);
       setDiaryText('');
@@ -212,14 +221,16 @@ class _DiaryPageState extends State<DiaryPage> {
                 );
               },
             ).then((_) {
-              //setState(() {});
               fetchDiary();
             });
           },
         ),
         Align(
             alignment: Alignment.centerRight,
-            child: Container(width: 48, height: 48, child: MenuWidget())),
+            child: SizedBox(
+                width: 48,
+                height: 48,
+                child: MenuWidget(diaryId: _diaryEntry?.diaryId))),
       ],
     );
   }
@@ -239,25 +250,22 @@ class _DiaryPageState extends State<DiaryPage> {
   Widget buildDiaryTextField() {
     return Container(
       height: 200,
-      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 255, 241, 213),
+        color: const Color.fromARGB(255, 255, 241, 213),
         borderRadius: BorderRadius.circular(12),
       ),
       child: TextField(
+        enabled: false,
         controller: _controller,
         maxLines: null,
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           filled: true,
           fillColor: Colors.transparent,
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.transparent),
-            borderRadius: BorderRadius.all(Radius.circular(12)),
-          ),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.transparent),
-            borderRadius: BorderRadius.all(Radius.circular(12)),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          disabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.transparent),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
       ),
