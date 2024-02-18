@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:strecording/main.dart';
+import 'package:strecording/utilities/login_platform.dart';
 import 'package:strecording/widgets/webview_widget.dart';
 
 class LoginPage extends StatefulWidget {
@@ -43,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
               height: 58,
               child: ElevatedButton(
                 onPressed: () {
-                  // AuthManager.signInWithGoogle(_navigateToHome);
+                  AuthManager.signInWithGoogle(_navigateToHome);
                 },
                 style: ButtonStyle(
                   backgroundColor:
