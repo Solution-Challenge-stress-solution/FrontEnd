@@ -18,7 +18,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool isRecorded = false;
+  bool isRecorded = true; //false;
+  String _filePath = '';
   Activity? myActivity;
 
   Future<void> fetchDiary() async {
@@ -91,10 +92,10 @@ class _HomePageState extends State<HomePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                          const SizedBox(
+                          SizedBox(
                               width: 400,
-                              height: 180,
-                              child: AudioPlayerWidget()),
+                              height: 120,
+                              child: AudioPlayerWidget(filePath: _filePath)),
                           const SizedBox(height: 20),
                           const Text('Daily Stress Level',
                               style: TextStyle(
