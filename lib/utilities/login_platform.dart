@@ -1,14 +1,13 @@
 import 'dart:convert';
 
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+// import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:http/http.dart' as http;
 import 'package:strecording/utilities/token_manager.dart' as token_manager;
 
 enum LoginPlatform {
   google,
   kakao,
-  facebook,
   none, // logout
 }
 
@@ -19,37 +18,34 @@ class AuthManager {
   static LoginPlatform currentPlatform = LoginPlatform.none;
 
   static final GoogleSignIn _googleSignIn = GoogleSignIn();
-  static final _kakaoUserApi = UserApi.instance;
+  // static final _kakaoUserApi = UserApi.instance;
 
   static Future<void> signInWithGoogle(
       NavigationCallback navigateToHome) async {
-    // final signinUrlRes =
-    //     await http.get(Uri.parse('http://34.64.90.112:8080/auth/google'));
-    //     json.decode(signinUrlRes)[]
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
     if (googleUser != null) {
-      print('name = ${googleUser.displayName}');
-      print('email = ${googleUser.email}');
-      print('id = ${googleUser.id}');
+      // Get the access token from the googleAuth object
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
-      AuthManager.currentPlatform = LoginPlatform.google;
+      final String? accessToken = googleAuth.accessToken;
 
-      final String email = googleUser.email;
-      final String name = googleUser.displayName.toString();
-      final String? profileSrc = googleUser.photoUrl;
+      final requestUrl =
+          'http://strecording.shop:8080/auth/google/access?accessToken=${accessToken}';
+      final res = await http.get(Uri.parse(requestUrl));
+      final resJson = json.decode(res.body);
 
-      //navigateToHome(email, name, profileSrc);
-    } else {
-      print('google login failed!');
+      // Set jwt token
+      if (resJson['status'] == 'SUCCESS') {
+        String accessToken = resJson['data']['accessToken'];
+        token_manager.TokenManager.setToken(accessToken);
+        AuthManager.currentPlatform = LoginPlatform.google;
+        navigateToHome();
+      } else {
+        print('Google login failed! Error ${resJson['status']}');
+      }
     }
-  }
-
-  static Future<String> getGoogleUrl() async {
-    String requestUrl = 'http://34.64.90.112:8080/auth/google';
-    final response = await http.get(Uri.parse(requestUrl));
-    print(json.decode(response.body));
-    return json.decode(response.body);
   }
 
   static Future<void> signInWithKakao(String oauthCode) async {
