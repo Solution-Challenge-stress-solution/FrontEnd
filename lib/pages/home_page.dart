@@ -94,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                       children: <Widget>[
                           SizedBox(
                               width: 400,
-                              height: 120,
+                              height: 140,
                               child: AudioPlayerWidget(filePath: _filePath)),
                           const SizedBox(height: 20),
                           const Text('Daily Stress Level',

@@ -12,9 +12,8 @@ class AudioPlayerWidget extends StatefulWidget {
 
 class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   final AudioPlayer _audioPlayer = AudioPlayer();
-  double _currentSliderValue = 0;
-  Duration _duration = Duration();
-  Duration _position = Duration();
+  Duration _duration = const Duration();
+  Duration _position = const Duration();
   bool isPlaying = false;
 
   @override
@@ -34,7 +33,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
 
   void _playAudio() async {
     await _audioPlayer.play(UrlSource(
-        //'https://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/theme_01.mp3'));
+        // 'https://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/theme_01.mp3'));
         widget.filePath));
   }
 
@@ -83,7 +82,6 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                 max: _duration.inSeconds.toDouble(),
                 onChanged: (value) {
                   setState(() {
-                    _currentSliderValue = value;
                     _audioPlayer.seek(Duration(seconds: value.toInt()));
                   });
                 },
