@@ -1,10 +1,14 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+
 import 'package:strecording/widgets/recording_widget.dart';
 import 'package:strecording/widgets/calendar_widget.dart';
 import 'package:strecording/widgets/menu_widget.dart';
 import 'package:strecording/widgets/loading_widget.dart';
 import 'package:strecording/widgets/modal_widget.dart';
+import 'package:strecording/utilities/token_manager.dart';
 
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
@@ -19,6 +23,7 @@ class _DiaryPageState extends State<DiaryPage> {
   bool _isModalOpen = false;
   String _diaryText = '';
   DateTime _currentDate = DateTime.now();
+  late TextEditingController _controller;
 
   void toggleIsLoading() {
     setState(() {
@@ -45,7 +50,9 @@ class _DiaryPageState extends State<DiaryPage> {
   }
 
   void setCurrentDate(DateTime selectedDate) {
-    _currentDate = selectedDate;
+    setState(() {
+      _currentDate = selectedDate;
+    });
   }
 
   DateTime getCurrentDate() {
@@ -56,6 +63,29 @@ class _DiaryPageState extends State<DiaryPage> {
     setState(() {
       isRecording = !isRecording;
     });
+  }
+
+  Future<void> fetchDiary() async {
+    String dailyDate = _currentDate.toString().split(' ')[0];
+    final requestUrl = 'http://strecording.shop:8080/diaries/$dailyDate';
+
+    try {
+      final res =
+          await http.get(Uri.parse(requestUrl), headers: TokenManager.headers);
+      final resJson = json.decode(utf8.decode(res.bodyBytes));
+      setDiaryText(resJson['data']['content']);
+    } catch (e) {
+      print(e);
+      setDiaryText('');
+    } finally {
+      _controller.text = _diaryText;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: _diaryText);
   }
 
   @override
@@ -131,7 +161,8 @@ class _DiaryPageState extends State<DiaryPage> {
                 );
               },
             ).then((_) {
-              setState(() {});
+              //setState(() {});
+              fetchDiary();
             });
           },
         ),
@@ -162,9 +193,10 @@ class _DiaryPageState extends State<DiaryPage> {
         color: Color.fromARGB(255, 255, 241, 213),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: const TextField(
+      child: TextField(
+        controller: _controller,
         maxLines: null,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           filled: true,
           fillColor: Colors.transparent,
           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),

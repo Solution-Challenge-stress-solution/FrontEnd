@@ -64,7 +64,7 @@ class _ModalWidgetState extends State<ModalWidget> {
                         border: InputBorder.none, // Remove TextField border
                         hintText: 'Input text here',
                         contentPadding:
-                            EdgeInsets.all(10), // Padding inside the box
+                            EdgeInsets.all(16), // Padding inside the box
                       ),
                     ),
                   ),
