@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:strecording/utilities/token_manager.dart';
 
 class ModalWidget extends StatefulWidget {
   const ModalWidget(
-      {super.key, required this.closeModal, required this.initialText});
+      {super.key,
+      required this.closeModal,
+      required this.initialText,
+      required this.filePath,
+      required this.postDiary});
 
   final VoidCallback closeModal;
   final String initialText;
+  final String filePath;
+  final void Function(String, String) postDiary;
 
   @override
   State<ModalWidget> createState() => _ModalWidgetState();
@@ -19,6 +23,7 @@ class _ModalWidgetState extends State<ModalWidget> {
   void _handleSubmit() {
     final inputText = _controller.text;
     print('Submitted text: $inputText');
+    widget.postDiary(widget.filePath, inputText);
     widget.closeModal();
   }
 
@@ -61,7 +66,7 @@ class _ModalWidgetState extends State<ModalWidget> {
                       controller: _controller,
                       maxLines: null, // Set maxLines to null for auto-expansion
                       decoration: const InputDecoration(
-                        border: InputBorder.none, // Remove TextField border
+                        border: InputBorder.none,
                         hintText: 'Input text here',
                         contentPadding:
                             EdgeInsets.all(16), // Padding inside the box
@@ -75,7 +80,7 @@ class _ModalWidgetState extends State<ModalWidget> {
                   style: ElevatedButton.styleFrom(
                     minimumSize:
                         const Size.fromHeight(48), // Set the button's height
-                    primary: Colors.teal, // Set the button's background color
+                    backgroundColor: Colors.teal,
                   ),
                   child: const Text('확인',
                       style: TextStyle(fontSize: 20, color: Colors.white)),

@@ -9,7 +9,15 @@ class TokenManager {
     _token = null;
   }
 
-  static Map<String, String> get headers {
+  static String? getToken() {
+    if (_token != null) {
+      return _token;
+    } else {
+      return '';
+    }
+  }
+
+  static Map<String, String> getHeaders() {
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
     };
@@ -17,6 +25,8 @@ class TokenManager {
     if (_token != null) {
       headers['Authorization'] = 'Bearer $_token';
     }
+
+    print(headers);
 
     return headers;
   }

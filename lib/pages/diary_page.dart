@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:intl/intl.dart';
 
 import 'package:strecording/widgets/recording_widget.dart';
@@ -21,6 +22,7 @@ class _DiaryPageState extends State<DiaryPage> {
   bool isRecording = false;
   bool _isLoading = false;
   bool _isModalOpen = false;
+  String _filePath = '';
   String _diaryText = '';
   DateTime _currentDate = DateTime.now();
   late TextEditingController _controller;
@@ -49,6 +51,12 @@ class _DiaryPageState extends State<DiaryPage> {
     });
   }
 
+  void setFilePath(String path) {
+    setState(() {
+      _filePath = path;
+    });
+  }
+
   void setCurrentDate(DateTime selectedDate) {
     setState(() {
       _currentDate = selectedDate;
@@ -70,8 +78,8 @@ class _DiaryPageState extends State<DiaryPage> {
     final requestUrl = 'http://strecording.shop:8080/diaries/$dailyDate';
 
     try {
-      final res =
-          await http.get(Uri.parse(requestUrl), headers: TokenManager.headers);
+      final res = await http.get(Uri.parse(requestUrl),
+          headers: TokenManager.getHeaders());
       final resJson = json.decode(utf8.decode(res.bodyBytes));
       setDiaryText(resJson['data']['content']);
     } catch (e) {
@@ -79,6 +87,44 @@ class _DiaryPageState extends State<DiaryPage> {
       setDiaryText('');
     } finally {
       _controller.text = _diaryText;
+    }
+  }
+
+  Future<void> postDiary(String path, String text) async {
+    const requestUrl = 'http://strecording.shop:8080/diaries';
+
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse(requestUrl),
+    )
+      ..fields['content'] = text
+      ..files.add(await http.MultipartFile.fromPath(
+        'audioFile',
+        path,
+        contentType: MediaType('audio', 'x-flac'),
+      ));
+
+    request.headers.addAll({
+      'Content-Type': 'multipart/form-data',
+      'Authorization': 'Bearer ${TokenManager.getToken()}',
+    });
+
+    try {
+      final streamRes = await request.send();
+      final streamResJson =
+          json.decode(utf8.decode(await streamRes.stream.toBytes()));
+      print(streamResJson);
+
+      if (streamResJson['status'] == 'SUCCESS') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Today's diary has been successfully recorded"),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -115,7 +161,11 @@ class _DiaryPageState extends State<DiaryPage> {
             ),
           if (_isLoading) const LoadingWidget(),
           if (_isModalOpen)
-            ModalWidget(closeModal: closeModal, initialText: _diaryText),
+            ModalWidget(
+                closeModal: closeModal,
+                initialText: _diaryText,
+                filePath: _filePath,
+                postDiary: postDiary),
           Positioned(
               left: 16,
               right: 16,
@@ -127,6 +177,7 @@ class _DiaryPageState extends State<DiaryPage> {
                 toggleIsLoading: toggleIsLoading,
                 openModal: openModal,
                 setDiaryText: setDiaryText,
+                setFilePath: setFilePath,
               )),
         ],
       ),

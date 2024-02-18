@@ -9,6 +9,7 @@ class RecordingWidget extends StatefulWidget {
     required this.toggleIsLoading,
     required this.openModal,
     required this.setDiaryText,
+    required this.setFilePath,
   }) : super(key: key);
 
   final VoidCallback toggleIsRecording;
@@ -16,6 +17,7 @@ class RecordingWidget extends StatefulWidget {
   final VoidCallback toggleIsLoading;
   final VoidCallback openModal;
   final void Function(String) setDiaryText;
+  final void Function(String) setFilePath;
 
   @override
   State<RecordingWidget> createState() => _RecordingWidgetState();
@@ -30,6 +32,7 @@ class _RecordingWidgetState extends State<RecordingWidget> {
         widget.toggleIsLoading();
         RecordManager.postFile(path).then((res) {
           widget.toggleIsLoading();
+          widget.setFilePath(path);
           print('res: $res');
           widget.setDiaryText(res);
           widget.openModal();
