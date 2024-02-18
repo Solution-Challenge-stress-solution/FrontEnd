@@ -4,6 +4,7 @@ import 'package:strecording/widgets/recording_widget.dart';
 import 'package:strecording/widgets/calendar_widget.dart';
 import 'package:strecording/widgets/menu_widget.dart';
 import 'package:strecording/widgets/loading_widget.dart';
+import 'package:strecording/widgets/modal_widget.dart';
 
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
@@ -15,11 +16,31 @@ class DiaryPage extends StatefulWidget {
 class _DiaryPageState extends State<DiaryPage> {
   bool isRecording = false;
   bool _isLoading = false;
+  bool _isModalOpen = false;
+  String _diaryText = '';
   DateTime _currentDate = DateTime.now();
 
   void toggleIsLoading() {
     setState(() {
       _isLoading = !_isLoading;
+    });
+  }
+
+  void openModal() {
+    setState(() {
+      _isModalOpen = true;
+    });
+  }
+
+  void closeModal() {
+    setState(() {
+      _isModalOpen = false;
+    });
+  }
+
+  void setDiaryText(String text) {
+    setState(() {
+      _diaryText = text;
     });
   }
 
@@ -63,6 +84,8 @@ class _DiaryPageState extends State<DiaryPage> {
               ),
             ),
           if (_isLoading) const LoadingWidget(),
+          if (_isModalOpen)
+            ModalWidget(closeModal: closeModal, initialText: _diaryText),
           Positioned(
               left: 16,
               right: 16,
@@ -72,6 +95,8 @@ class _DiaryPageState extends State<DiaryPage> {
                 toggleIsRecording: toggleIsRecording,
                 isRecording: isRecording,
                 toggleIsLoading: toggleIsLoading,
+                openModal: openModal,
+                setDiaryText: setDiaryText,
               )),
         ],
       ),
