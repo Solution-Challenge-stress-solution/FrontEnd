@@ -11,11 +11,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   void _navigateToHome() {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => const MyHomePage(
-            email: 'test',
-            name: 'test',
-            profileImg: 'assets/images/profile.png')));
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const MyHomePage()));
   }
 
   @override
