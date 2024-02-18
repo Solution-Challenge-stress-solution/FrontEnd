@@ -1,8 +1,15 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:intl/intl.dart';
+
 import 'package:strecording/widgets/recording_widget.dart';
 import 'package:strecording/widgets/calendar_widget.dart';
 import 'package:strecording/widgets/menu_widget.dart';
+import 'package:strecording/widgets/loading_widget.dart';
+import 'package:strecording/widgets/modal_widget.dart';
+import 'package:strecording/utilities/token_manager.dart';
 
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
@@ -13,10 +20,47 @@ class DiaryPage extends StatefulWidget {
 
 class _DiaryPageState extends State<DiaryPage> {
   bool isRecording = false;
+  bool _isLoading = false;
+  bool _isModalOpen = false;
+  String _filePath = '';
+  String _diaryText = '';
   DateTime _currentDate = DateTime.now();
+  late TextEditingController _controller;
+
+  void toggleIsLoading() {
+    setState(() {
+      _isLoading = !_isLoading;
+    });
+  }
+
+  void openModal() {
+    setState(() {
+      _isModalOpen = true;
+    });
+  }
+
+  void closeModal() {
+    setState(() {
+      _isModalOpen = false;
+    });
+  }
+
+  void setDiaryText(String text) {
+    setState(() {
+      _diaryText = text;
+    });
+  }
+
+  void setFilePath(String path) {
+    setState(() {
+      _filePath = path;
+    });
+  }
 
   void setCurrentDate(DateTime selectedDate) {
-    _currentDate = selectedDate;
+    setState(() {
+      _currentDate = selectedDate;
+    });
   }
 
   DateTime getCurrentDate() {
@@ -27,6 +71,67 @@ class _DiaryPageState extends State<DiaryPage> {
     setState(() {
       isRecording = !isRecording;
     });
+  }
+
+  Future<void> fetchDiary() async {
+    String dailyDate = _currentDate.toString().split(' ')[0];
+    final requestUrl = 'http://strecording.shop:8080/diaries/$dailyDate';
+
+    try {
+      final res = await http.get(Uri.parse(requestUrl),
+          headers: TokenManager.getHeaders());
+      final resJson = json.decode(utf8.decode(res.bodyBytes));
+      setDiaryText(resJson['data']['content']);
+    } catch (e) {
+      print(e);
+      setDiaryText('');
+    } finally {
+      _controller.text = _diaryText;
+    }
+  }
+
+  Future<void> postDiary(String path, String text) async {
+    const requestUrl = 'http://strecording.shop:8080/diaries';
+
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse(requestUrl),
+    )
+      ..fields['content'] = text
+      ..files.add(await http.MultipartFile.fromPath(
+        'audioFile',
+        path,
+        contentType: MediaType('audio', 'x-flac'),
+      ));
+
+    request.headers.addAll({
+      'Content-Type': 'multipart/form-data',
+      'Authorization': 'Bearer ${TokenManager.getToken()}',
+    });
+
+    try {
+      final streamRes = await request.send();
+      final streamResJson =
+          json.decode(utf8.decode(await streamRes.stream.toBytes()));
+      print(streamResJson);
+
+      if (streamResJson['status'] == 'SUCCESS') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Today's diary has been successfully recorded"),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: _diaryText);
   }
 
   @override
@@ -54,14 +159,26 @@ class _DiaryPageState extends State<DiaryPage> {
                 color: Colors.black.withOpacity(0.25),
               ),
             ),
+          if (_isLoading) const LoadingWidget(),
+          if (_isModalOpen)
+            ModalWidget(
+                closeModal: closeModal,
+                initialText: _diaryText,
+                filePath: _filePath,
+                postDiary: postDiary),
           Positioned(
               left: 16,
               right: 16,
               bottom: 10,
               height: 80,
               child: RecordingWidget(
-                  toggleIsRecording: toggleIsRecording,
-                  isRecording: isRecording)),
+                toggleIsRecording: toggleIsRecording,
+                isRecording: isRecording,
+                toggleIsLoading: toggleIsLoading,
+                openModal: openModal,
+                setDiaryText: setDiaryText,
+                setFilePath: setFilePath,
+              )),
         ],
       ),
     );
@@ -95,7 +212,8 @@ class _DiaryPageState extends State<DiaryPage> {
                 );
               },
             ).then((_) {
-              setState(() {});
+              //setState(() {});
+              fetchDiary();
             });
           },
         ),
@@ -126,9 +244,10 @@ class _DiaryPageState extends State<DiaryPage> {
         color: Color.fromARGB(255, 255, 241, 213),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: const TextField(
+      child: TextField(
+        controller: _controller,
         maxLines: null,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           filled: true,
           fillColor: Colors.transparent,
           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
