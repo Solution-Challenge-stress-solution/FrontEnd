@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 class AudioPlayerWidget extends StatefulWidget {
-  const AudioPlayerWidget({super.key});
+  const AudioPlayerWidget({super.key, required this.filePath});
+
+  final String filePath;
 
   @override
   State<AudioPlayerWidget> createState() => _AudioPlayerWidgetState();
@@ -10,9 +12,8 @@ class AudioPlayerWidget extends StatefulWidget {
 
 class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   final AudioPlayer _audioPlayer = AudioPlayer();
-  double _currentSliderValue = 0;
-  Duration _duration = Duration();
-  Duration _position = Duration();
+  Duration _duration = const Duration();
+  Duration _position = const Duration();
   bool isPlaying = false;
 
   @override
@@ -31,8 +32,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   }
 
   void _playAudio() async {
-    await _audioPlayer.play(UrlSource(
-        'https://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/theme_01.mp3'));
+    await _audioPlayer.play(UrlSource(widget.filePath));
   }
 
   void _pauseAudio() async {
@@ -43,65 +43,45 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        border: Border.all(color: Color.fromARGB(255, 30, 107, 125)),
-        borderRadius: BorderRadius.circular(25.0),
-      ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          const Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              '😍',
-              style: TextStyle(
-                fontSize: 40,
-              ),
+          const Text(
+            'Listen to your feelings',
+            style: TextStyle(
+              fontSize: 16,
             ),
           ),
-          Container(
-              height: 100,
-              width: 240,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  const Text(
-                    'Listen to your feelings',
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      IconButton(
-                        icon: isPlaying
-                            ? Icon(Icons.stop_sharp)
-                            : Icon(Icons.play_arrow),
-                        onPressed: () {
-                          if (isPlaying) {
-                            _pauseAudio();
-                          } else {
-                            _playAudio();
-                          }
-                          toggleIsPlaying();
-                        },
-                      ),
-                      Slider(
-                        value: _position.inSeconds.toDouble(),
-                        min: 0,
-                        max: _duration.inSeconds.toDouble(),
-                        onChanged: (value) {
-                          setState(() {
-                            _currentSliderValue = value;
-                            _audioPlayer.seek(Duration(seconds: value.toInt()));
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ))
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              IconButton(
+                icon: isPlaying
+                    ? const Icon(Icons.stop_sharp)
+                    : const Icon(Icons.play_arrow),
+                onPressed: () {
+                  if (isPlaying) {
+                    _pauseAudio();
+                  } else {
+                    _playAudio();
+                  }
+                  toggleIsPlaying();
+                },
+              ),
+              Slider(
+                value: _position.inSeconds.toDouble(),
+                min: 0,
+                max: _duration.inSeconds.toDouble(),
+                onChanged: (value) {
+                  setState(() {
+                    _audioPlayer.seek(Duration(seconds: value.toInt()));
+                  });
+                },
+              ),
+            ],
+          ),
         ],
       ),
     );

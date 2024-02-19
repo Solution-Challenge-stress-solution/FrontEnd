@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:intl/intl.dart';
+
+import 'package:strecording/utilities/token_manager.dart';
 import 'package:strecording/widgets/audioplayer_widget.dart';
 import 'package:strecording/widgets/stress_level.dart';
 import 'package:strecording/widgets/activitycard_widget.dart';
@@ -15,8 +18,27 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool isRecorded = true;
+  bool isRecorded = false;
+  final String _filePath = '';
   Activity? myActivity;
+
+  Future<void> fetchDiary() async {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+
+    final requestUrl = 'http://strecording.shop:8080/diaries/$formattedDate';
+    final res = await http.get(Uri.parse(requestUrl),
+        headers: TokenManager.getHeaders());
+    final resJson = json.decode(utf8.decode(res.bodyBytes));
+    if (resJson['status'] == 'SUCCESS') {
+      setState(() {
+        isRecorded = true;
+      });
+    } else {
+      isRecorded = false;
+      print(resJson);
+    }
+  }
 
   Future<void> fetchActivity(int argument) async {
     var url = Uri.parse('http://34.64.90.112:8080/api/activities/$argument');
@@ -39,6 +61,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    fetchDiary();
+
     if (isRecorded) {
       fetchActivity(1);
     } else {
@@ -68,10 +92,16 @@ class _HomePageState extends State<HomePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                          const SizedBox(
+                          Container(
                               width: 400,
-                              height: 180,
-                              child: AudioPlayerWidget()),
+                              height: 140,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: const Color.fromARGB(
+                                        255, 30, 107, 125)),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: AudioPlayerWidget(filePath: _filePath)),
                           const SizedBox(height: 20),
                           const Text('Daily Stress Level',
                               style: TextStyle(
