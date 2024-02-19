@@ -32,9 +32,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   }
 
   void _playAudio() async {
-    await _audioPlayer.play(UrlSource(
-        // 'https://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/theme_01.mp3'));
-        widget.filePath));
+    await _audioPlayer.play(UrlSource(widget.filePath));
   }
 
   void _pauseAudio() async {
@@ -45,10 +43,6 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        border: Border.all(color: const Color.fromARGB(255, 30, 107, 125)),
-        borderRadius: BorderRadius.circular(12),
-      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,

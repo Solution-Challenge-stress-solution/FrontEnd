@@ -92,9 +92,15 @@ class _HomePageState extends State<HomePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                          SizedBox(
+                          Container(
                               width: 400,
                               height: 140,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: const Color.fromARGB(
+                                        255, 30, 107, 125)),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                               child: AudioPlayerWidget(filePath: _filePath)),
                           const SizedBox(height: 20),
                           const Text('Daily Stress Level',

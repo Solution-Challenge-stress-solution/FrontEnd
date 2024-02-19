@@ -11,6 +11,7 @@ import 'package:strecording/widgets/loading_widget.dart';
 import 'package:strecording/widgets/modal_widget.dart';
 import 'package:strecording/utilities/token_manager.dart';
 import 'package:strecording/utilities/diary_entry.dart';
+import 'package:strecording/widgets/audioplayer_widget.dart';
 
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
@@ -25,7 +26,21 @@ class _DiaryPageState extends State<DiaryPage> {
   bool _isModalOpen = false;
   String _filePath = '';
   String _diaryText = '';
-  DiaryEntry? _diaryEntry;
+  DiaryEntry? _diaryEntry = DiaryEntry.fromJson({
+    'diaryId': 1,
+    'content': 'hi',
+    'audioFileUrl':
+        'https://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/theme_01.mp3',
+    'angry': 0.80,
+    'sadness': 0.11,
+    'disgusting': 0.52,
+    'fear': 1.62,
+    'happiness': 2.22,
+    'stress_point': 37.7,
+    'max_emotion': 'happiness',
+    'activityId': 1,
+  });
+  // DiaryEntry? _diaryEntry;
   DateTime _currentDate = DateTime.now();
   late TextEditingController _controller;
 
@@ -89,11 +104,14 @@ class _DiaryPageState extends State<DiaryPage> {
       final res = await http.get(Uri.parse(requestUrl),
           headers: TokenManager.getHeaders());
       final resJson = json.decode(utf8.decode(res.bodyBytes));
-      setDiaryText(resJson['data']['content']);
-      setDiaryEntry(resJson['data']);
+
+      if (resJson['status'] == 'SUCCESS') {
+        setDiaryText(resJson['data']['content']);
+        setFilePath(resJson['data']['audioFileUrl']);
+        setDiaryEntry(resJson['data']);
+      }
     } catch (e) {
       print(e);
-      setDiaryText('');
     } finally {
       _controller.text = _diaryText;
     }
@@ -141,6 +159,7 @@ class _DiaryPageState extends State<DiaryPage> {
   void initState() {
     super.initState();
     _controller = TextEditingController(text: _diaryText);
+    fetchDiary();
   }
 
   @override
@@ -151,12 +170,22 @@ class _DiaryPageState extends State<DiaryPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 buildDiaryHeader(),
                 const SizedBox(height: 16),
                 buildDateDisplay(),
-                const SizedBox(height: 200),
+                Expanded(
+                  child: Center(
+                    child: _diaryEntry != null
+                        ? SizedBox(
+                            width: 400,
+                            height: 100,
+                            child: AudioPlayerWidget(filePath: _filePath),
+                          )
+                        : const SizedBox
+                            .shrink(), // Use SizedBox.shrink() to avoid taking space when there is no audio player
+                  ),
+                ),
                 buildDiaryTextField(),
                 const SizedBox(height: 110),
               ],
