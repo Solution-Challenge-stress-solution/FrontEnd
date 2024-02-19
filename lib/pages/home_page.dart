@@ -5,8 +5,9 @@ import 'package:intl/intl.dart';
 
 import 'package:strecording/utilities/token_manager.dart';
 import 'package:strecording/widgets/audioplayer_widget.dart';
-import 'package:strecording/widgets/stress_level.dart';
+import 'package:strecording/widgets/emotions_widget.dart';
 import 'package:strecording/widgets/activitycard_widget.dart';
+import 'package:strecording/utilities/diary_entry.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.navigateToDiaryPage});
@@ -18,9 +19,31 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool isRecorded = false;
+  bool isRecorded = true;
   final String _filePath = '';
   Activity? myActivity;
+
+  DiaryEntry? _diaryEntry = DiaryEntry.fromJson({
+    'diaryId': 1,
+    'content': 'hi',
+    'audioFileUrl':
+        'https://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/theme_01.mp3',
+    'angry': 0.80,
+    'sadness': 0.11,
+    'disgusting': 0.52,
+    'fear': 1.62,
+    'happiness': 2.22,
+    'stress_point': 37.7,
+    'max_emotion': 'happiness',
+    'activityId': 1,
+  });
+  // DiaryEntry? _diaryEntry;
+
+  void setDiaryEntry(Map<String, dynamic> diary) {
+    setState(() {
+      _diaryEntry = DiaryEntry.fromJson(diary);
+    });
+  }
 
   Future<void> fetchDiary() async {
     DateTime now = DateTime.now();
@@ -34,6 +57,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         isRecorded = true;
       });
+      setDiaryEntry(resJson['data']);
     } else {
       isRecorded = false;
       print(resJson);
@@ -41,7 +65,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> fetchActivity(int argument) async {
-    var url = Uri.parse('http://34.64.90.112:8080/api/activities/$argument');
+    var url = Uri.parse('http://34.64.90.112:8080/activities/$argument');
 
     try {
       var response = await http.get(url);
@@ -87,7 +111,7 @@ class _HomePageState extends State<HomePage> {
                     fontWeight: FontWeight.normal,
                     fontSize: 60,
                   )),
-              isRecorded
+              isRecorded && _diaryEntry != null
                   ? Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,7 +133,13 @@ class _HomePageState extends State<HomePage> {
                                 fontWeight: FontWeight.normal,
                                 fontSize: 60,
                               )),
-                          const StressLevelWidget(),
+                          EmotionsWidget(
+                              h: _diaryEntry!.happiness,
+                              a: _diaryEntry!.angry,
+                              s: _diaryEntry!.sadness,
+                              d: _diaryEntry!.disgusting,
+                              f: _diaryEntry!.fear,
+                              stressLevel: _diaryEntry!.stressPoint),
                           const SizedBox(height: 20),
                           const Text(
                             "Today's Activity",
