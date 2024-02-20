@@ -22,7 +22,11 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
 
   Future<void> _initAudio(String filePath) async {
     _audioPlayer = AudioPlayer();
-    await _audioPlayer.setFilePath(filePath);
+    try {
+      await _audioPlayer.setFilePath(filePath);
+    } catch (e) {
+      print(e);
+    }
   }
 
   void toggleIsPlaying() {
