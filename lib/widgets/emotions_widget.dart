@@ -67,8 +67,7 @@ class EmotionsWidget extends StatelessWidget {
               children: emotionRows,
             ),
           ),
-          const SizedBox(width: 20),
-          Expanded(child: StressLevelIndicator(stressLevel: stressLevel)),
+          StressLevelIndicator(stressLevel: stressLevel),
         ],
       ),
     );
@@ -91,14 +90,14 @@ class EmotionRow extends StatelessWidget {
     double fontSize = rank == 1 ? 40 : 24;
     TextStyle textStyle = rank == 1
         ? const TextStyle(
-            fontSize: 18,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
             color: Color.fromARGB(255, 250, 170, 5))
         : const TextStyle(fontSize: 18);
 
     return Container(
       width: 160,
-      height: 50,
+      height: 55,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -125,7 +124,8 @@ class StressLevelIndicator extends StatelessWidget {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         return Container(
-          height: 250,
+          height: 270,
+          width: 130,
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
             border: Border.all(color: const Color.fromARGB(255, 255, 210, 116)),

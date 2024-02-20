@@ -33,7 +33,6 @@ class _RecordingWidgetState extends State<RecordingWidget> {
         RecordManager.postFile(path).then((res) {
           widget.toggleIsLoading();
           widget.setFilePath(path);
-          print('res: $res');
           widget.setDiaryText(res);
           widget.openModal();
         });

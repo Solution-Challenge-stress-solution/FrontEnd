@@ -22,7 +22,6 @@ class _ModalWidgetState extends State<ModalWidget> {
 
   void _handleSubmit() {
     final inputText = _controller.text;
-    print('Submitted text: $inputText');
     widget.postDiary(widget.filePath, inputText);
     widget.closeModal();
   }
