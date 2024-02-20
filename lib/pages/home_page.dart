@@ -22,22 +22,7 @@ class _HomePageState extends State<HomePage> {
   bool isRecorded = true;
   final String _filePath = '';
   Activity? myActivity;
-
-  DiaryEntry? _diaryEntry = DiaryEntry.fromJson({
-    'diaryId': 1,
-    'content': 'hi',
-    'audioFileUrl':
-        'https://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/theme_01.mp3',
-    'angry': 0.80,
-    'sadness': 0.11,
-    'disgusting': 0.52,
-    'fear': 1.62,
-    'happiness': 2.22,
-    'stress_point': 37.7,
-    'max_emotion': 'happiness',
-    'activityId': 1,
-  });
-  // DiaryEntry? _diaryEntry;
+  DiaryEntry? _diaryEntry;
 
   void setDiaryEntry(Map<String, dynamic> diary) {
     setState(() {
@@ -87,8 +72,8 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     fetchDiary();
 
-    if (isRecorded) {
-      fetchActivity(1);
+    if (_diaryEntry != null) {
+      fetchActivity(_diaryEntry!.activityId);
     } else {
       setState(() {
         myActivity = null;

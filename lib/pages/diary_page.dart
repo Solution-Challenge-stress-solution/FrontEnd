@@ -24,23 +24,9 @@ class _DiaryPageState extends State<DiaryPage> {
   bool isRecording = false;
   bool _isLoading = false;
   bool _isModalOpen = false;
-  String _filePath = '';
+  String? _filePath;
   String _diaryText = '';
-  DiaryEntry? _diaryEntry = DiaryEntry.fromJson({
-    'diaryId': 1,
-    'content': 'hi',
-    'audioFileUrl':
-        'https://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/theme_01.mp3',
-    'angry': 0.80,
-    'sadness': 0.11,
-    'disgusting': 0.52,
-    'fear': 1.62,
-    'happiness': 2.22,
-    'stress_point': 37.7,
-    'max_emotion': 'happiness',
-    'activityId': 1,
-  });
-  // DiaryEntry? _diaryEntry;
+  DiaryEntry? _diaryEntry;
   DateTime _currentDate = DateTime.now();
   late TextEditingController _controller;
 
@@ -180,7 +166,8 @@ class _DiaryPageState extends State<DiaryPage> {
                         ? SizedBox(
                             width: 400,
                             height: 100,
-                            child: AudioPlayerWidget(filePath: _filePath),
+                            child: AudioPlayerWidget(
+                                filePath: _diaryEntry!.audioFileUrl),
                           )
                         : const SizedBox
                             .shrink(), // Use SizedBox.shrink() to avoid taking space when there is no audio player
@@ -202,7 +189,7 @@ class _DiaryPageState extends State<DiaryPage> {
             ModalWidget(
                 closeModal: closeModal,
                 initialText: _diaryText,
-                filePath: _filePath,
+                filePath: _filePath.toString(),
                 postDiary: postDiary),
           Positioned(
               left: 16,
@@ -236,12 +223,12 @@ class _DiaryPageState extends State<DiaryPage> {
           ),
         ),
         IconButton(
-          icon: Icon(Icons.calendar_today),
+          icon: const Icon(Icons.calendar_today),
           onPressed: () {
             showModalBottomSheet(
               context: context,
               builder: (BuildContext context) {
-                return Container(
+                return SizedBox(
                   height: MediaQuery.of(context).size.height * 0.95,
                   child: CalendarWidget(
                       setCurrentDate: setCurrentDate,
