@@ -35,7 +35,7 @@ class ActivityCard extends StatelessWidget {
         side: const BorderSide(color: Color.fromARGB(255, 30, 107, 125)),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -50,7 +50,7 @@ class ActivityCard extends StatelessWidget {
                       style: const TextStyle(
                         color: Colors.white,
                         fontFamily: 'Dongle',
-                        fontSize: 40,
+                        fontSize: 48,
                       ),
                     ),
                   ),
