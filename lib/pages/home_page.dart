@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
       setDiaryEntry(resJson['data']);
     } else {
       isRecorded = false;
-      print(resJson);
+      print('Failed to fetch diary: $resJson');
     }
   }
 
@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
           myActivity = Activity.fromJson(activityJson['data']);
         });
       } else {
-        print('Failed to load data');
+        print('Failed to fetch activity: ${response.statusCode}');
       }
     } catch (e) {
       print('Caught error: $e');

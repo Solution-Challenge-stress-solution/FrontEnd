@@ -26,8 +26,6 @@ class TokenManager {
       headers['Authorization'] = 'Bearer $_token';
     }
 
-    print(headers);
-
     return headers;
   }
 }
