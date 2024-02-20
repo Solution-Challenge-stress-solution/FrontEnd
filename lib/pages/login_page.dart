@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Image.asset(
-              'assets/images/loginlogo.png',
+              'assets/images/main_logo.png',
               height: 160,
             ),
             const SizedBox(height: 36),

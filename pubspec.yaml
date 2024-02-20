@@ -75,8 +75,8 @@ flutter:
   assets:
     - assets/images/book_unclicked.png
     - assets/images/book_clicked.png
-    - assets/images/mainlogo.png
-    - assets/images/loginlogo.png
+    - assets/images/welcome_logo.png
+    - assets/images/main_logo.png
     - assets/images/google_login.png
     - assets/images/kakao_login.png
     - assets/images/profile.png

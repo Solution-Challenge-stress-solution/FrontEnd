@@ -60,7 +60,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         children: <Widget>[
           const Spacer(),
           Image.asset(
-            'assets/images/mainlogo.png',
+            'assets/images/welcome_logo.png',
             width: 128,
             height: 128,
           ),
