@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:just_audio/just_audio.dart';
 
 class AudioPlayerWidget extends StatefulWidget {
   const AudioPlayerWidget({super.key, required this.filePath});
@@ -11,20 +11,18 @@ class AudioPlayerWidget extends StatefulWidget {
 }
 
 class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
-  final AudioPlayer _audioPlayer = AudioPlayer();
-  Duration _duration = const Duration();
-  Duration _position = const Duration();
+  late AudioPlayer _audioPlayer;
   bool isPlaying = false;
 
   @override
   void initState() {
     super.initState();
-    _audioPlayer.onDurationChanged.listen((Duration d) {
-      setState(() => _duration = d);
-    });
-    _audioPlayer.onPositionChanged.listen((Duration p) {
-      setState(() => _position = p);
-    });
+    _initAudio(widget.filePath);
+  }
+
+  Future<void> _initAudio(String filePath) async {
+    _audioPlayer = AudioPlayer();
+    await _audioPlayer.setFilePath(filePath);
   }
 
   void toggleIsPlaying() {
@@ -32,7 +30,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   }
 
   void _playAudio() async {
-    await _audioPlayer.play(UrlSource(widget.filePath));
+    await _audioPlayer.play();
   }
 
   void _pauseAudio() async {
@@ -57,27 +55,51 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              IconButton(
-                icon: isPlaying
-                    ? const Icon(Icons.stop_sharp)
-                    : const Icon(Icons.play_arrow),
-                onPressed: () {
-                  if (isPlaying) {
-                    _pauseAudio();
+              StreamBuilder<PlayerState>(
+                stream: _audioPlayer.playerStateStream,
+                builder: (context, snapshot) {
+                  final playerState = snapshot.data;
+                  final processingState = playerState?.processingState;
+                  final playing = playerState?.playing;
+                  if (processingState == ProcessingState.loading ||
+                      processingState == ProcessingState.buffering) {
+                    return Container(
+                      margin: const EdgeInsets.all(8),
+                      width: 32.0,
+                      height: 32.0,
+                      child: const CircularProgressIndicator(),
+                    );
+                  } else if (playing != true) {
+                    return IconButton(
+                      icon: const Icon(Icons.play_arrow),
+                      onPressed: _playAudio,
+                    );
+                  } else if (processingState != ProcessingState.completed) {
+                    return IconButton(
+                      icon: const Icon(Icons.pause),
+                      onPressed: _pauseAudio,
+                    );
                   } else {
-                    _playAudio();
+                    return IconButton(
+                      icon: const Icon(Icons.replay),
+                      onPressed: () => _audioPlayer.seek(Duration.zero),
+                    );
                   }
-                  toggleIsPlaying();
                 },
               ),
-              Slider(
-                value: _position.inSeconds.toDouble(),
-                min: 0,
-                max: _duration.inSeconds.toDouble(),
-                onChanged: (value) {
-                  setState(() {
-                    _audioPlayer.seek(Duration(seconds: value.toInt()));
-                  });
+              StreamBuilder<Duration>(
+                stream: _audioPlayer.positionStream,
+                builder: (context, snapshot) {
+                  final position = snapshot.data ?? Duration.zero;
+                  final duration = _audioPlayer.duration ?? Duration.zero;
+                  return Slider(
+                    value: position.inSeconds.toDouble(),
+                    min: 0,
+                    max: duration.inSeconds.toDouble(),
+                    onChanged: (value) {
+                      _audioPlayer.seek(Duration(seconds: value.toInt()));
+                    },
+                  );
                 },
               ),
             ],
