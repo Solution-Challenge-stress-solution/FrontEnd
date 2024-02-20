@@ -287,11 +287,11 @@ class _DiaryPageState extends State<DiaryPage> {
         enabled: false,
         controller: _controller,
         maxLines: null,
+        style: const TextStyle(color: Colors.black, fontSize: 16),
         decoration: InputDecoration(
           filled: true,
           fillColor: Colors.transparent,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          contentPadding: const EdgeInsets.all(16),
           disabledBorder: OutlineInputBorder(
             borderSide: const BorderSide(color: Colors.transparent),
             borderRadius: BorderRadius.circular(12),

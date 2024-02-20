@@ -39,12 +39,12 @@ dependencies:
   timezone: ^0.9.2
   table_calendar: ^3.0.9
   intl: ^0.19.0
-  audioplayers: ^5.2.1
   record: ^5.0.0
   http_parser: ^4.0.2
   path_provider: ^2.1.2
   path: ^1.8.3
   webview_flutter: ^4.7.0
+  just_audio: ^0.9.36
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
@@ -75,8 +75,8 @@ flutter:
   assets:
     - assets/images/book_unclicked.png
     - assets/images/book_clicked.png
-    - assets/images/mainlogo.png
-    - assets/images/loginlogo.png
+    - assets/images/welcome_logo.png
+    - assets/images/main_logo.png
     - assets/images/google_login.png
     - assets/images/kakao_login.png
     - assets/images/profile.png
