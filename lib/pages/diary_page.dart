@@ -52,6 +52,7 @@ class _DiaryPageState extends State<DiaryPage> {
     setState(() {
       _diaryText = text;
     });
+    _controller.text = text;
   }
 
   void setFilePath(String path) {
@@ -95,11 +96,12 @@ class _DiaryPageState extends State<DiaryPage> {
         setDiaryText(resJson['data']['content']);
         setFilePath(resJson['data']['audioFileUrl']);
         setDiaryEntry(resJson['data']);
+      } else {
+        setDiaryText('');
+        print('Failed to fetch diary: $resJson');
       }
     } catch (e) {
       print(e);
-    } finally {
-      _controller.text = _diaryText;
     }
   }
 
@@ -129,6 +131,7 @@ class _DiaryPageState extends State<DiaryPage> {
       print(streamResJson);
 
       if (streamResJson['status'] == 'SUCCESS') {
+        setDiaryText(text);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text("Today's diary has been successfully recorded"),
