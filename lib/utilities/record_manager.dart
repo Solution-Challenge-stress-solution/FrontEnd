@@ -23,9 +23,9 @@ class RecordManager {
       String filePath = path.join(dir.path, 'diary.flac');
 
       await record.start(
-          const RecordConfig(
+          RecordConfig(
             encoder: AudioEncoder.flac,
-            sampleRate: 48000,
+            sampleRate: Platform.isAndroid ? 44100 : 48000,
             numChannels: 1,
           ),
           path: filePath);
@@ -70,7 +70,7 @@ class RecordManager {
         return jsonResponse['data'];
       } else {
         print("Failed to upload file: ${streamResponse.statusCode}");
-        return jsonResponse['message'] ?? 'Unknown error';
+        return jsonResponse['errMsg'] ?? 'Unknown error';
       }
     } catch (e) {
       print("Error sending file: $e");
