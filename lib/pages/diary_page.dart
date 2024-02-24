@@ -106,6 +106,7 @@ class _DiaryPageState extends State<DiaryPage> {
   }
 
   Future<void> postDiary(String path, String text) async {
+    toggleIsLoading();
     const requestUrl = 'http://strecording.shop:8080/diaries';
 
     var request = http.MultipartRequest(
@@ -132,12 +133,46 @@ class _DiaryPageState extends State<DiaryPage> {
 
       if (streamResJson['status'] == 'SUCCESS') {
         setDiaryText(text);
+        postPrediction(path, streamResJson['data']);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> postPrediction(String path, int id) async {
+    final requestUrl =
+        'http://strecording.shop:8080/emotion/prediction/diaries/${id.toString()}';
+
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse(requestUrl),
+    )..files.add(await http.MultipartFile.fromPath(
+        'audioFile',
+        path,
+        contentType: MediaType('audio', 'x-flac'),
+      ));
+
+    request.headers.addAll({
+      'Content-Type': 'multipart/form-data',
+      'Authorization': 'Bearer ${TokenManager.getToken()}',
+    });
+
+    try {
+      final streamRes = await request.send();
+      final streamResJson =
+          json.decode(utf8.decode(await streamRes.stream.toBytes()));
+      print(streamResJson);
+
+      if (streamRes.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text("Today's diary has been successfully recorded"),
             duration: Duration(seconds: 3),
           ),
         );
+        fetchDiary();
+        toggleIsLoading();
       }
     } catch (e) {
       print(e);
