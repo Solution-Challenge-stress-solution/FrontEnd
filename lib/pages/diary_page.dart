@@ -281,6 +281,7 @@ class _DiaryPageState extends State<DiaryPage> {
                 openModal: openModal,
                 setDiaryText: setDiaryText,
                 setFilePath: setFilePath,
+                currentDate: _currentDate,
               )),
         ],
       ),
