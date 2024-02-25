@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:strecording/pages/login_page.dart';
 import 'package:strecording/utilities/login_platform.dart';
-import 'package:strecording/utilities/notification_manager.dart';
-import 'dart:io';
+// import 'package:strecording/utilities/notification_manager.dart';
+// import 'dart:io';
 
 class SettingsWidget extends StatefulWidget {
   const SettingsWidget({Key? key}) : super(key: key);
@@ -65,54 +65,50 @@ class _SettingsWidgetState extends State<SettingsWidget>
     return Scaffold(
       body: ListView(
         children: <Widget>[
-           ListTile(
-             title: const Text('Diary notification'),
-             trailing: Row(
-               mainAxisSize: MainAxisSize.min,
-               children: [
-                 if (isNotificationEnabled)
-                   Container(
-                     margin: const EdgeInsets.only(left: 16),
-                     child: OutlinedButton(
-                       onPressed: () => _selectTime(context),
-                       style: OutlinedButton.styleFrom(
-                         side: const BorderSide(
-                             color: Color.fromARGB(255, 255, 251, 255)),
-                         padding: const EdgeInsets.symmetric(
-                             horizontal: 8, vertical: 4),
-                       ),
-                       child: Text(
-                         selectedTime.format(context),
-                         style: const TextStyle(
-                           color: Color(0xFF3CADAB),
-                           fontSize: 14,
-                           fontWeight: FontWeight.bold,
-                         ),
-                       ),
-                     ),
-                   ),
-                 Switch(
-                   value: isNotificationEnabled,
-                   onChanged: (bool value) async {
-                     setState(() {
-                       isNotificationEnabled = value;
-                     });
-                     await _savePreferences();
-                     if (value) {
-                       // Android에서는 알림 권한 요청이 필요 없습니다.
-                       if (Platform.isIOS) {
-                         NotificationManager.requestNotificationPermission();
-                       }
-                       // 알림 설정이 적용되었다는 메시지를 표시합니다.
-                       ScaffoldMessenger.of(context).showSnackBar(
-                         SnackBar(content: Text('Notification settings have been applied')),
-                       );
-                     }
-                   },
-                 ),
-               ],
-             ),
-           ),
+          // ListTile(
+          //   title: const Text('Diary notification'),
+          //   trailing: Row(
+          //     mainAxisSize: MainAxisSize.min,
+          //     children: [
+          //       if (isNotificationEnabled)
+          //         Container(
+          //           margin: const EdgeInsets.only(left: 16),
+          //           child: OutlinedButton(
+          //             onPressed: () => _selectTime(context),
+          //             style: OutlinedButton.styleFrom(
+          //               side: const BorderSide(
+          //                   color: Color.fromARGB(255, 255, 251, 255)),
+          //               padding: const EdgeInsets.symmetric(
+          //                   horizontal: 8, vertical: 4),
+          //             ),
+          //             child: Text(
+          //               selectedTime.format(context),
+          //               style: const TextStyle(
+          //                 color: Color(0xFF3CADAB),
+          //                 fontSize: 14,
+          //                 fontWeight: FontWeight.bold,
+          //               ),
+          //             ),
+          //           ),
+          //         ),
+          //       Switch(
+          //         value: isNotificationEnabled,
+          //         onChanged: (bool value) async {
+          //           setState(() {
+          //             isNotificationEnabled = value;
+          //           });
+          //           await _savePreferences();
+          //           if (value) {
+          //             // Android does not require permissions
+          //             if (Platform.isIOS) {
+          //               NotificationManager.requestNotificationPermission();
+          //             }
+          //           }
+          //         },
+          //       ),
+          //     ],
+          //   ),
+          // ),
           ListTile(
             title: const Text('Sign out'),
             onTap: () async {
@@ -143,7 +139,7 @@ class _SettingsWidgetState extends State<SettingsWidget>
             },
           ),
           ListTile(
-            title: Text(
+            title: const Text(
               'Delete account',
               style: TextStyle(color: Colors.red),
             ),
@@ -153,7 +149,8 @@ class _SettingsWidgetState extends State<SettingsWidget>
                 builder: (BuildContext context) {
                   return AlertDialog(
                     title: const Text('Confirm Delete'),
-                    content: const Text('Are you sure you want to delete your account?'),
+                    content: const Text(
+                        'Are you sure you want to delete your account?'),
                     actions: <Widget>[
                       TextButton(
                         child: const Text('Cancel'),
@@ -176,7 +173,8 @@ class _SettingsWidgetState extends State<SettingsWidget>
                 if (deleteSuccessful) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Your account has been successfully deleted'),
+                      content:
+                          Text('Your account has been successfully deleted'),
                       duration: Duration(seconds: 3),
                     ),
                   );
