@@ -20,7 +20,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool isRecorded = true;
-  final String _filePath = '';
   Activity? myActivity;
   DiaryEntry? _diaryEntry;
 
@@ -110,7 +109,8 @@ class _HomePageState extends State<HomePage> {
                                         255, 30, 107, 125)),
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: AudioPlayerWidget(filePath: _filePath)),
+                              child: AudioPlayerWidget(
+                                  filePath: _diaryEntry!.audioFileUrl)),
                           const SizedBox(height: 20),
                           const Text('Daily Stress Level',
                               style: TextStyle(

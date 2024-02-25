@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 class AudioPlayerWidget extends StatefulWidget {
   const AudioPlayerWidget({super.key, required this.filePath});
@@ -17,15 +20,35 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   @override
   void initState() {
     super.initState();
+    _audioPlayer = AudioPlayer();
     _initAudio(widget.filePath);
   }
 
   Future<void> _initAudio(String filePath) async {
-    _audioPlayer = AudioPlayer();
+    File? file = await downloadFile(filePath, 'diary.flac');
+
     try {
-      await _audioPlayer.setFilePath(filePath);
+      await _audioPlayer.setFilePath(file!.path);
     } catch (e) {
       print(e);
+      print('filePath: $file');
+    }
+  }
+
+  // Convert google bucket url into an actual file url
+  Future<File?> downloadFile(String url, String fileName) async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final filePath = '${directory.path}/$fileName';
+      final response = await http.get(Uri.parse(url));
+
+      final file = File(filePath);
+      await file.writeAsBytes(response.bodyBytes);
+      return file;
+    } catch (e) {
+      print('Err while downloading audio file');
+      print(e);
+      return null;
     }
   }
 
