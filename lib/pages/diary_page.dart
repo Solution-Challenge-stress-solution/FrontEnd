@@ -184,6 +184,39 @@ class _DiaryPageState extends State<DiaryPage> {
     }
   }
 
+  Future<void> deleteDiary(int? diaryId) async {
+    if (diaryId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Diary cannot be deleted because it is empty!'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    } else {
+      final requestUrl = 'http://strecording.shop:8080/diaries/$diaryId';
+      final res = await http.delete(Uri.parse(requestUrl),
+          headers: TokenManager.getHeaders());
+      final resJson = json.decode(utf8.decode(res.bodyBytes));
+
+      if (resJson['status'] == 'SUCCESS') {
+        print(resJson);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Diary has been successfully deleted!'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Diary cannot be deleted!'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -287,11 +320,17 @@ class _DiaryPageState extends State<DiaryPage> {
           },
         ),
         Align(
-            alignment: Alignment.centerRight,
-            child: SizedBox(
-                width: 48,
-                height: 48,
-                child: MenuWidget(diaryId: _diaryEntry?.diaryId))),
+          alignment: Alignment.centerRight,
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: MenuWidget(
+              diaryId: _diaryEntry?.diaryId,
+              fetchDiary: fetchDiary,
+              deleteDiary: deleteDiary,
+            ),
+          ),
+        ),
       ],
     );
   }
