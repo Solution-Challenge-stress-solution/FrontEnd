@@ -95,7 +95,7 @@ class AuthManager {
   static Future<bool> deleteAccount() async {
     try {
       String? token = await token_manager.TokenManager.getToken();
-      String requestUrl = 'http://34.64.90.112:8080/auth/api/delete_account';
+      String requestUrl = 'http://strecording.shop:8080/user/delete';
 
       final response = await http.delete(
         Uri.parse(requestUrl),

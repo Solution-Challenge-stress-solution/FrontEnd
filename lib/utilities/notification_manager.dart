@@ -72,7 +72,7 @@ class NotificationManager {
     await flutterLocalNotificationsPlugin.zonedSchedule(
       0,
       'STREcording',
-      '일기 작성할 시간입니다',
+      'It\'s time to write your diary. Let\'s start recording your day!',
       makeDate(21, 1),
       notificationDetails,
       androidAllowWhileIdle: true,

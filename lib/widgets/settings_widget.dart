@@ -105,7 +105,7 @@ class _SettingsWidgetState extends State<SettingsWidget>
                        }
                        // 알림 설정이 적용되었다는 메시지를 표시합니다.
                        ScaffoldMessenger.of(context).showSnackBar(
-                         SnackBar(content: Text('알림 설정이 적용되었습니다(영어로 바꿔줄것)')),
+                         SnackBar(content: Text('Notification settings have been applied')),
                        );
                      }
                    },
@@ -142,55 +142,58 @@ class _SettingsWidgetState extends State<SettingsWidget>
               }
             },
           ),
-           ListTile(
-             title: const Text('Delete account'),
-             onTap: () async {
-               final bool confirmDelete = await showDialog(
-                 context: context,
-                 builder: (BuildContext context) {
-                   return AlertDialog(
-                     title: const Text('Confirm Delete'),
-                     content: const Text('Are you sure you want to delete your account?'),
-                     actions: <Widget>[
-                       TextButton(
-                         child: const Text('Cancel'),
-                         onPressed: () => Navigator.of(context).pop(false),
-                       ),
-                       TextButton(
-                         child: const Text('Delete'),
-                         onPressed: () => Navigator.of(context).pop(true),
-                       ),
-                     ],
-                   );
-                 },
-               );
+          ListTile(
+            title: Text(
+              'Delete account',
+              style: TextStyle(color: Colors.red),
+            ),
+            onTap: () async {
+              final bool confirmDelete = await showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Confirm Delete'),
+                    content: const Text('Are you sure you want to delete your account?'),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Cancel'),
+                        onPressed: () => Navigator.of(context).pop(false),
+                      ),
+                      TextButton(
+                        child: const Text('Delete'),
+                        onPressed: () => Navigator.of(context).pop(true),
+                      ),
+                    ],
+                  );
+                },
+              );
 
-               if (confirmDelete) {
-                 final bool deleteSuccessful = await AuthManager.deleteAccount();
+              if (confirmDelete) {
+                final bool deleteSuccessful = await AuthManager.deleteAccount();
 
-                 if (!mounted) return;
+                if (!mounted) return;
 
-                 if (deleteSuccessful) {
-                   ScaffoldMessenger.of(context).showSnackBar(
-                     const SnackBar(
-                       content: Text('Your account has been successfully deleted'),
-                       duration: Duration(seconds: 3),
-                     ),
-                   );
-                   Navigator.of(context).pushReplacement(
-                     MaterialPageRoute(builder: (context) => const LoginPage()),
-                   );
-                 } else {
-                   ScaffoldMessenger.of(context).showSnackBar(
-                     const SnackBar(
-                       content: Text('Error! Failed to delete your account'),
-                       duration: Duration(seconds: 3),
-                     ),
-                   );
-                 }
-               }
-             },
-           ),
+                if (deleteSuccessful) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Your account has been successfully deleted'),
+                      duration: Duration(seconds: 3),
+                    ),
+                  );
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Error! Failed to delete your account'),
+                      duration: Duration(seconds: 3),
+                    ),
+                  );
+                }
+              }
+            },
+          ),
         ],
       ),
     );
