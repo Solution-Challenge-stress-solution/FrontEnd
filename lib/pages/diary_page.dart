@@ -27,7 +27,7 @@ class _DiaryPageState extends State<DiaryPage> {
   String? _filePath;
   String _diaryText = '';
   DiaryEntry? _diaryEntry;
-  DateTime _currentDate = DateTime.now();
+  late DateTime _currentDate;
   late TextEditingController _controller;
 
   void toggleIsLoading() {
@@ -61,15 +61,19 @@ class _DiaryPageState extends State<DiaryPage> {
     });
   }
 
-  void setCurrentDate(DateTime selectedDate) {
+  void setDiaryEntry(Map<String, dynamic>? diary) {
     setState(() {
-      _currentDate = selectedDate;
+      if (diary != null) {
+        _diaryEntry = DiaryEntry.fromJson(diary);
+      } else {
+        _diaryEntry = null;
+      }
     });
   }
 
-  void setDiaryEntry(Map<String, dynamic> diary) {
+  void setCurrentDate(DateTime selectedDate) {
     setState(() {
-      _diaryEntry = DiaryEntry.fromJson(diary);
+      _currentDate = selectedDate;
     });
   }
 
@@ -98,6 +102,7 @@ class _DiaryPageState extends State<DiaryPage> {
         setDiaryEntry(resJson['data']);
       } else {
         setDiaryText('');
+        setDiaryEntry(null);
         print('Failed to fetch diary: $resJson');
       }
     } catch (e) {
@@ -182,6 +187,7 @@ class _DiaryPageState extends State<DiaryPage> {
   @override
   void initState() {
     super.initState();
+    setCurrentDate(DateTime.now());
     _controller = TextEditingController(text: _diaryText);
     fetchDiary();
   }
@@ -205,6 +211,7 @@ class _DiaryPageState extends State<DiaryPage> {
                             width: 400,
                             height: 100,
                             child: AudioPlayerWidget(
+                                key: ValueKey(_diaryEntry!.diaryId),
                                 filePath: _diaryEntry!.audioFileUrl),
                           )
                         : const SizedBox
