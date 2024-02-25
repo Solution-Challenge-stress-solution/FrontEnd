@@ -27,7 +27,7 @@ class _DiaryPageState extends State<DiaryPage> {
   String? _filePath;
   String _diaryText = '';
   DiaryEntry? _diaryEntry;
-  DateTime _currentDate = DateTime.now();
+  late DateTime _currentDate;
   late TextEditingController _controller;
 
   void toggleIsLoading() {
@@ -61,15 +61,19 @@ class _DiaryPageState extends State<DiaryPage> {
     });
   }
 
-  void setCurrentDate(DateTime selectedDate) {
+  void setDiaryEntry(Map<String, dynamic>? diary) {
     setState(() {
-      _currentDate = selectedDate;
+      if (diary != null) {
+        _diaryEntry = DiaryEntry.fromJson(diary);
+      } else {
+        _diaryEntry = null;
+      }
     });
   }
 
-  void setDiaryEntry(Map<String, dynamic> diary) {
+  void setCurrentDate(DateTime selectedDate) {
     setState(() {
-      _diaryEntry = DiaryEntry.fromJson(diary);
+      _currentDate = selectedDate;
     });
   }
 
@@ -98,6 +102,7 @@ class _DiaryPageState extends State<DiaryPage> {
         setDiaryEntry(resJson['data']);
       } else {
         setDiaryText('');
+        setDiaryEntry(null);
         print('Failed to fetch diary: $resJson');
       }
     } catch (e) {
@@ -106,6 +111,7 @@ class _DiaryPageState extends State<DiaryPage> {
   }
 
   Future<void> postDiary(String path, String text) async {
+    toggleIsLoading();
     const requestUrl = 'http://strecording.shop:8080/diaries';
 
     var request = http.MultipartRequest(
@@ -132,21 +138,89 @@ class _DiaryPageState extends State<DiaryPage> {
 
       if (streamResJson['status'] == 'SUCCESS') {
         setDiaryText(text);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Today's diary has been successfully recorded"),
-            duration: Duration(seconds: 3),
-          ),
-        );
+        postPrediction(path, streamResJson['data']);
       }
     } catch (e) {
       print(e);
     }
   }
 
+  Future<void> postPrediction(String path, int id) async {
+    final requestUrl =
+        'http://strecording.shop:8080/emotion/prediction/diaries/${id.toString()}';
+
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse(requestUrl),
+    )..files.add(await http.MultipartFile.fromPath(
+        'audioFile',
+        path,
+        contentType: MediaType('audio', 'x-flac'),
+      ));
+
+    request.headers.addAll({
+      'Content-Type': 'multipart/form-data',
+      'Authorization': 'Bearer ${TokenManager.getToken()}',
+    });
+
+    try {
+      final streamRes = await request.send();
+      final streamResJson =
+          json.decode(utf8.decode(await streamRes.stream.toBytes()));
+      print(streamResJson);
+
+      if (streamRes.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Today's diary has been successfully recorded"),
+            duration: Duration(seconds: 3),
+          ),
+        );
+        fetchDiary();
+        toggleIsLoading();
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> deleteDiary(int? diaryId) async {
+    if (diaryId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Diary cannot be deleted because it is empty!'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    } else {
+      final requestUrl = 'http://strecording.shop:8080/diaries/$diaryId';
+      final res = await http.delete(Uri.parse(requestUrl),
+          headers: TokenManager.getHeaders());
+      final resJson = json.decode(utf8.decode(res.bodyBytes));
+
+      if (resJson['status'] == 'SUCCESS') {
+        print(resJson);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Diary has been successfully deleted!'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Diary cannot be deleted!'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    setCurrentDate(DateTime.now());
     _controller = TextEditingController(text: _diaryText);
     fetchDiary();
   }
@@ -170,6 +244,7 @@ class _DiaryPageState extends State<DiaryPage> {
                             width: 400,
                             height: 100,
                             child: AudioPlayerWidget(
+                                key: ValueKey(_diaryEntry!.diaryId),
                                 filePath: _diaryEntry!.audioFileUrl),
                           )
                         : const SizedBox
@@ -206,6 +281,7 @@ class _DiaryPageState extends State<DiaryPage> {
                 openModal: openModal,
                 setDiaryText: setDiaryText,
                 setFilePath: setFilePath,
+                currentDate: _currentDate,
               )),
         ],
       ),
@@ -245,11 +321,17 @@ class _DiaryPageState extends State<DiaryPage> {
           },
         ),
         Align(
-            alignment: Alignment.centerRight,
-            child: SizedBox(
-                width: 48,
-                height: 48,
-                child: MenuWidget(diaryId: _diaryEntry?.diaryId))),
+          alignment: Alignment.centerRight,
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: MenuWidget(
+              diaryId: _diaryEntry?.diaryId,
+              fetchDiary: fetchDiary,
+              deleteDiary: deleteDiary,
+            ),
+          ),
+        ),
       ],
     );
   }

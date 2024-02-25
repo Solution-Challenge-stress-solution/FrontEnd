@@ -10,6 +10,7 @@ class RecordingWidget extends StatefulWidget {
     required this.openModal,
     required this.setDiaryText,
     required this.setFilePath,
+    required this.currentDate,
   }) : super(key: key);
 
   final VoidCallback toggleIsRecording;
@@ -18,28 +19,41 @@ class RecordingWidget extends StatefulWidget {
   final VoidCallback openModal;
   final void Function(String) setDiaryText;
   final void Function(String) setFilePath;
+  final DateTime currentDate;
 
   @override
   State<RecordingWidget> createState() => _RecordingWidgetState();
 }
 
 class _RecordingWidgetState extends State<RecordingWidget> {
-  void handlePress() {
-    if (!widget.isRecording) {
-      RecordManager.startRecord();
-    } else {
-      RecordManager.stopRecord().then((path) {
-        widget.toggleIsLoading();
-        RecordManager.postFile(path).then((res) {
-          widget.toggleIsLoading();
-          widget.setFilePath(path);
-          widget.setDiaryText(res);
-          widget.openModal();
-        });
-      });
-    }
+  final today = DateTime.now().toString().split(' ')[0];
 
-    widget.toggleIsRecording();
+  void handlePress() {
+    // Allow recording only when trying to record for today
+    if (widget.currentDate.toString().split(' ')[0] == today) {
+      if (!widget.isRecording) {
+        RecordManager.startRecord();
+      } else {
+        RecordManager.stopRecord().then((path) {
+          widget.toggleIsLoading();
+          RecordManager.postFile(path).then((res) {
+            widget.toggleIsLoading();
+            widget.setFilePath(path);
+            widget.setDiaryText(res);
+            widget.openModal();
+          });
+        });
+      }
+
+      widget.toggleIsRecording();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('You can record a diary only for today, $today'),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   @override

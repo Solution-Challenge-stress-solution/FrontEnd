@@ -20,7 +20,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool isRecorded = true;
-  final String _filePath = '';
   Activity? myActivity;
   DiaryEntry? _diaryEntry;
 
@@ -38,19 +37,21 @@ class _HomePageState extends State<HomePage> {
     final res = await http.get(Uri.parse(requestUrl),
         headers: TokenManager.getHeaders());
     final resJson = json.decode(utf8.decode(res.bodyBytes));
+
     if (resJson['status'] == 'SUCCESS') {
       setState(() {
         isRecorded = true;
       });
       setDiaryEntry(resJson['data']);
+      fetchActivity(resJson['data']['activityId']);
     } else {
       isRecorded = false;
       print('Failed to fetch diary: $resJson');
     }
   }
 
-  Future<void> fetchActivity(int argument) async {
-    var url = Uri.parse('http://34.64.90.112:8080/activities/$argument');
+  Future<void> fetchActivity(int activityId) async {
+    var url = Uri.parse('http://strecording.shop:8080/activities/$activityId');
 
     try {
       var response = await http.get(url);
@@ -71,14 +72,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     fetchDiary();
-
-    if (_diaryEntry != null) {
-      fetchActivity(_diaryEntry!.activityId);
-    } else {
-      setState(() {
-        myActivity = null;
-      });
-    }
   }
 
   @override
@@ -110,7 +103,8 @@ class _HomePageState extends State<HomePage> {
                                         255, 30, 107, 125)),
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: AudioPlayerWidget(filePath: _filePath)),
+                              child: AudioPlayerWidget(
+                                  filePath: _diaryEntry!.audioFileUrl)),
                           const SizedBox(height: 20),
                           const Text('Daily Stress Level',
                               style: TextStyle(
