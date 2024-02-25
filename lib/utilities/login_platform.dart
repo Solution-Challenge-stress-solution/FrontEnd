@@ -92,4 +92,28 @@ class AuthManager {
       return false;
     }
   }
+  static Future<bool> deleteAccount() async {
+    try {
+      String? token = await token_manager.TokenManager.getToken();
+      String requestUrl = 'http://strecording.shop:8080/user/delete';
+
+      final response = await http.delete(
+        Uri.parse(requestUrl),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        // 계정 삭제 성공
+        // 로그아웃 처리
+        return signOut();
+      } else {
+        // 계정 삭제 실패
+        print('Failed to delete account: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Error deleting account: $e');
+      return false;
+    }
+  }
 }

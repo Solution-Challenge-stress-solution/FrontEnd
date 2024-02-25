@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:strecording/pages/login_page.dart';
 import 'package:strecording/utilities/login_platform.dart';
+// import 'package:strecording/utilities/notification_manager.dart';
+// import 'dart:io';
 
 class SettingsWidget extends StatefulWidget {
   const SettingsWidget({Key? key}) : super(key: key);
@@ -96,6 +98,12 @@ class _SettingsWidgetState extends State<SettingsWidget>
           //             isNotificationEnabled = value;
           //           });
           //           await _savePreferences();
+          //           if (value) {
+          //             // Android does not require permissions
+          //             if (Platform.isIOS) {
+          //               NotificationManager.requestNotificationPermission();
+          //             }
+          //           }
           //         },
           //       ),
           //     ],
@@ -130,12 +138,60 @@ class _SettingsWidgetState extends State<SettingsWidget>
               }
             },
           ),
-          // ListTile(
-          //   title: const Text('Delete account'),
-          //   onTap: () => {
-          //     // Handle delete account
-          //   },
-          // ),
+          ListTile(
+            title: const Text(
+              'Delete account',
+              style: TextStyle(color: Colors.red),
+            ),
+            onTap: () async {
+              final bool confirmDelete = await showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Confirm Delete'),
+                    content: const Text(
+                        'Are you sure you want to delete your account?'),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Cancel'),
+                        onPressed: () => Navigator.of(context).pop(false),
+                      ),
+                      TextButton(
+                        child: const Text('Delete'),
+                        onPressed: () => Navigator.of(context).pop(true),
+                      ),
+                    ],
+                  );
+                },
+              );
+
+              if (confirmDelete) {
+                final bool deleteSuccessful = await AuthManager.deleteAccount();
+
+                if (!mounted) return;
+
+                if (deleteSuccessful) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content:
+                          Text('Your account has been successfully deleted'),
+                      duration: Duration(seconds: 3),
+                    ),
+                  );
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Error! Failed to delete your account'),
+                      duration: Duration(seconds: 3),
+                    ),
+                  );
+                }
+              }
+            },
+          ),
         ],
       ),
     );
