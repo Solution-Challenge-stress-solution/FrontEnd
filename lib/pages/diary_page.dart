@@ -237,21 +237,22 @@ class _DiaryPageState extends State<DiaryPage> {
                 buildDiaryHeader(),
                 const SizedBox(height: 16),
                 buildDateDisplay(),
-                Expanded(
-                  child: Center(
-                    child: _diaryEntry != null
-                        ? SizedBox(
-                            width: 400,
-                            height: 100,
-                            child: AudioPlayerWidget(
-                                key: ValueKey(_diaryEntry!.diaryId),
-                                filePath: _diaryEntry!.audioFileUrl),
-                          )
-                        : const SizedBox
-                            .shrink(), // Use SizedBox.shrink() to avoid taking space when there is no audio player
+                if (!_isModalOpen)
+                  Expanded(
+                    child: Center(
+                      child: _diaryEntry != null
+                          ? SizedBox(
+                              width: 400,
+                              height: 100,
+                              child: AudioPlayerWidget(
+                                  key: ValueKey(_diaryEntry!.diaryId),
+                                  filePath: _diaryEntry!.audioFileUrl),
+                            )
+                          : const SizedBox
+                              .shrink(), // Use SizedBox.shrink() to avoid taking space when there is no audio player
+                    ),
                   ),
-                ),
-                buildDiaryTextField(),
+                if (!_isModalOpen) buildDiaryTextField(),
                 const SizedBox(height: 110),
               ],
             ),
@@ -269,20 +270,21 @@ class _DiaryPageState extends State<DiaryPage> {
                 initialText: _diaryText,
                 filePath: _filePath.toString(),
                 postDiary: postDiary),
-          Positioned(
-              left: 16,
-              right: 16,
-              bottom: 10,
-              height: 80,
-              child: RecordingWidget(
-                toggleIsRecording: toggleIsRecording,
-                isRecording: isRecording,
-                toggleIsLoading: toggleIsLoading,
-                openModal: openModal,
-                setDiaryText: setDiaryText,
-                setFilePath: setFilePath,
-                currentDate: _currentDate,
-              )),
+          if (!_isModalOpen)
+            Positioned(
+                left: 16,
+                right: 16,
+                bottom: 10,
+                height: 80,
+                child: RecordingWidget(
+                  toggleIsRecording: toggleIsRecording,
+                  isRecording: isRecording,
+                  toggleIsLoading: toggleIsLoading,
+                  openModal: openModal,
+                  setDiaryText: setDiaryText,
+                  setFilePath: setFilePath,
+                  currentDate: _currentDate,
+                )),
         ],
       ),
     );
